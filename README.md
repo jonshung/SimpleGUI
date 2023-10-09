@@ -1,6 +1,6 @@
 # SimpleGUI
 A simple GUI interface written in C++
-#Usage
+# Usage
 TODO
-#Example
+# Example
 TODO
