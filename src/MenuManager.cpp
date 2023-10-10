@@ -1,5 +1,9 @@
 #include "MenuManager.h"
 
+/**
+ * @brief Construct a new Menu:: Menu object
+ * 
+ */
 Menu::Menu() {
     _direct = false;
     _WindowsHandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -8,12 +12,23 @@ Menu::Menu() {
     _currentSelection = 0;
 }
 
+/**
+ * @brief Set current text color
+ * 
+ * @param colorId 
+ */
 void Menu::setColor(int colorId) {
     HANDLE WindowsHandler = this->_WindowsHandle;
     int colorOffset = getTextColor(colorId, this->bgColor());
     SetConsoleTextAttribute(WindowsHandler, colorId);
 }
 
+/**
+ * @brief Print a string to screen and add a newline character at the end
+ * 
+ * @param prompt 
+ * @param color 
+ */
 void Menu::print(string prompt, int color) {
     this->setColor(color);
     cout << prompt << endl;

@@ -1,9 +1,18 @@
 #include "VendingMachine.h"
 
+/**
+ * @brief Construct a new Vending Machine:: Vending Machine object, adding a Default page to load.
+ * 
+ */
 VendingMachine::VendingMachine() {
     this->loadPage(VendingMachine::initDefaultPage());
 }
 
+/**
+ * @brief Intitiate a Default Page object
+ * 
+ * @return Page 
+ */
 Page VendingMachine::initDefaultPage() {
     vector<Selectable> selectables;
     selectables.push_back(Selectable("1. Snacks", &VendingMachine::directSnacksPage));
@@ -14,6 +23,12 @@ Page VendingMachine::initDefaultPage() {
     return defaultPage;
 }
 
+/**
+ * @brief Selectable Action to direct (navigate) to Default Page
+ * 
+ * @param m 
+ * @param page 
+ */
 void VendingMachine::directDefaultPage(Menu* m, Page &page) {
     try {
         m->setSelection(page, 0);
@@ -24,6 +39,11 @@ void VendingMachine::directDefaultPage(Menu* m, Page &page) {
     m->setDirect(true);
 }
 
+/**
+ * @brief Initiate a Snacks Page
+ * 
+ * @return Page 
+ */
 Page VendingMachine::initSnacksPage() {
     vector<Selectable> selectables;
     selectables.push_back(Selectable("1. Snack 1"));
@@ -39,6 +59,12 @@ Page VendingMachine::initSnacksPage() {
     return snacksPage;
 }
 
+/**
+ * @brief Selectable Action to direct (navigate) to Snacks Page
+ * 
+ * @param m 
+ * @param page 
+ */
 void VendingMachine::directSnacksPage(Menu* m, Page &page) {
     try {
         m->setSelection(page, 0);
@@ -49,6 +75,23 @@ void VendingMachine::directSnacksPage(Menu* m, Page &page) {
     m->setDirect(true);
 }
 
+/**
+ * @brief Initiate a Drinks Page
+ * 
+ * @param m 
+ * @param page 
+ */
+Page VendingMachine::initDrinksPage() {
+    Page drinksPage("Drinks");
+    return drinksPage;
+}
+
+/**
+ * @brief Selectable Action to direct (navigate) to Drinks Page
+ * 
+ * @param m 
+ * @param page 
+ */
 void VendingMachine::directDrinksPage(Menu* m, Page &page) {
     try {
         m->setSelection(page, 0);
@@ -58,6 +101,24 @@ void VendingMachine::directDrinksPage(Menu* m, Page &page) {
     m->setDirect(true);
 }
 
+/**
+ * @brief Initiate Product Page, holding current user's orders
+ * @todo: finish this example
+ * 
+ * @param m 
+ * @param page 
+ */
+Page VendingMachine::initProductPage() {
+    Page productPage("Product");
+    return productPage;
+}
+
+/**
+ * @brief Selectable Action to direct (navigate) to Product Page
+ * 
+ * @param m 
+ * @param page 
+ */
 void VendingMachine::directProductPage(Menu* m, Page &page) {
     try {
         m->setSelection(page, 0);
@@ -67,18 +128,15 @@ void VendingMachine::directProductPage(Menu* m, Page &page) {
     m->setDirect(true);
 }
 
+/**
+ * @brief Selectable Action, An example on how to take string input after pressing Selectable
+ * @todo: finish this example
+ * 
+ * @param m 
+ * @param page 
+ */
 void VendingMachine::input(Menu* m, Page &page) {
     std::string buffer;
     std::cout << "\n> ";
     std::getline(std::cin, buffer);
-}
-
-Page VendingMachine::initDrinksPage() {
-    Page drinksPage("Drinks");
-    return drinksPage;
-}
-
-Page VendingMachine::initProductPage() {
-    Page productPage("Product");
-    return productPage;
 }

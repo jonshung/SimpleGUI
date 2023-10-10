@@ -5,6 +5,7 @@
 
 class VendingMachine : public Menu {
 private:
+    vector<int> _userOrders;
 public:
     static Page initDefaultPage();
     static Page initSnacksPage();
