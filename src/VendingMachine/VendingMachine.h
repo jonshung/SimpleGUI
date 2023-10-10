@@ -4,12 +4,18 @@
 #include "MenuManager.h"
 
 class VendingMachine : public Menu {
+private:
 public:
-    static Selectable initDefaultPage(Menu* m);
-    static Selectable initSnacksPage(Menu* m);
-    static Selectable initDrinksPage(Menu* m);
-    static Selectable initProductPage(Menu* m);
-    /*VendingMachine() {
-        this->loadPage(initDefaultPage(this));
-    }*/
+    static Page initDefaultPage();
+    static Page initSnacksPage();
+    static Page initDrinksPage();
+    static Page initProductPage();
+
+    static void directDefaultPage(Menu* m, Page &page);
+    static void directSnacksPage(Menu* m, Page &page);
+    static void directDrinksPage(Menu* m, Page &page);
+    static void directProductPage(Menu* m, Page &page);
+
+    static void input(Menu* m, Page &page);
+    VendingMachine();
 };

@@ -1,6 +1,7 @@
 #include "MenuManager.h"
 
 Menu::Menu() {
+    _direct = false;
     _WindowsHandle = GetStdHandle(STD_OUTPUT_HANDLE);
     _bgColor = Color::BLACK;
     _defaultTextColor = Color::WHITE;
@@ -19,14 +20,23 @@ void Menu::print(string prompt, int color) {
     this->setColor(this->defaultTextColor());
 }
 
-void Menu::loadPage(Selectable page) {
+/**
+ * @brief Standard procedure to load a page, throw an exception if the number of displaying items is not equal to the number of selectables
+ * 
+ * @param page 
+ */
+void Menu::loadPage(Page page) {
+    vector<Selectable> selectables = page.getSelectables();
+    if(this->direct()) {
+        this->forceSetSelection(0);
+        this->setDirect(false);
+    }
     clearScreen();
     this->print(page.title(), Color::GREEN);
     this->print("");
-    vector<string> items = page.getItems();
-    for (int i = 0; i < items.size(); i++) {
-        if (this->currentSelection() == i) this->print(items[i], Color::PALE_YELLOW);
-        else this->print(items[i], this->defaultTextColor());
+    for (int i = 0; i < selectables.size(); i++) {
+        if (this->currentSelection() == i) this->print(selectables[i].label(), Color::PALE_YELLOW);
+        else this->print(selectables[i].label(), this->defaultTextColor());
     }
     // TODO: FINISH
     this->eventListener(page);
@@ -34,12 +44,12 @@ void Menu::loadPage(Selectable page) {
 }
 
 /**
- * @brief HANDLING USER INPUT ON A PAGE
+ * @brief Handle user inputs in the interface.
  * @todo: SEPERATING EVENT HANDLING INTO METHODS
  *
  * @param page
  */
-void Menu::eventListener(Selectable page) {
+void Menu::eventListener(Page page) {
     bool updateFlag = false;
     bool quitFlag = false;
     while (true) {
@@ -52,8 +62,13 @@ void Menu::eventListener(Selectable page) {
             case Keys::Up: {
                 while (selection > 0) {
                     --selection;
-                    SelectableNavigator dest = page.getNavigator(selection);
-                    if (dest != nullptr) {
+                    Selectable dest;
+                    try {
+                        dest = page.getSelectable(selection);
+                    } catch(const std::invalid_argument& e) {
+                        cout << e.what() << endl;
+                    }
+                    if (dest.getAction() != nullptr) {
                         this->setSelection(page, selection);
                         updateFlag = true;
                         break;
@@ -62,10 +77,15 @@ void Menu::eventListener(Selectable page) {
                 break;
             }
             case Keys::Down: {
-                while (selection < page.getNavigators().size() - 1) {
+                while (selection < page.getSelectables().size() - 1) {
                     ++selection;
-                    SelectableNavigator dest = page.getNavigator(selection);
-                    if (dest != nullptr) {
+                    Selectable dest;
+                    try {
+                        dest = page.getSelectable(selection);
+                    } catch(const std::invalid_argument& e) {
+                        cout << e.what() << endl;
+                    }
+                    if (dest.getAction() != nullptr) {
                         this->setSelection(page, selection);
                         updateFlag = true;
                         break;
@@ -77,18 +97,14 @@ void Menu::eventListener(Selectable page) {
             }
         }
         if (Keys::Enter == key) {
-            SelectableNavigator dest = page.getNavigator(this->currentSelection());
-            if (dest == nullptr) continue;
-            if (dest == (void*) &initQuit) {
+            Selectable dest = page.getSelectable(this->currentSelection());
+            if (dest.getAction() == nullptr) continue;
+            if (dest.getAction() == (void*) &initQuit) {
                 quitFlag = true;
-                this->print("Quitting program...", Color::GRAY);
                 break;
             }
-            Selectable item = (dest)(this);
-            if(item.isPage()) {
-                this->setSelection(page, 0);
-                page = item;
-            }
+
+            (dest.getAction())(this, page);
             updateFlag = true;
         }
         if (updateFlag) break;
@@ -96,56 +112,94 @@ void Menu::eventListener(Selectable page) {
     if (!quitFlag) loadPage(page);
 }
 
+/**
+ * @brief Get default menu color
+ * 
+ * @param color 
+ */
 void Menu::setDefaultTextColor(int color) {
     this->_defaultTextColor = color;
 }
 
-void Menu::setSelection(Selectable page, int id) {
-    if (id >= page.getNavigators().size()) {
-        string msg = concatenateString({ "Exception at trying to select navigator ", std::to_string(id), " in page navigator size: ", std::to_string(page.getNavigators().size()), "\n" });
+/**
+ * @brief Set current user's selection, throw an exception if the selection cannot be found
+ * 
+ * @param page 
+ * @param id 
+ */
+void Menu::setSelection(Page page, int id) {
+    if (id >= page.getSelectables().size()) {
+        string msg = concatenateString({ "Exception at trying to select navigator ", std::to_string(id), " in page navigator size: ", std::to_string(page.getSelectables().size()), "\n" });
         this->print(msg, Color::RED);
         return;
     }
     this->_currentSelection = id;
 }
 
-Selectable Menu::initQuit(Menu* m) {
-    Selectable quitPage("");
-    return quitPage;
+/**
+ * @brief This should only be used when we are certain the selection is available
+ * 
+ * @param id 
+ */
+void Menu::forceSetSelection(int id) {
+    this->_currentSelection = id;
 }
 
-Selectable Menu::doNothing(Menu* m) {
-    Selectable doNothingPage("");
-    return doNothingPage;
+/**
+ * @brief Default quitting action
+ */
+void Menu::initQuit(Menu* m, Page &page) {
+    m->print("Quitting program...", Color::GRAY);
+}
+
+/**
+ * @brief This function is a placeholder for selectable that doesn't have any action
+ */
+void Menu::doNothing(Menu* m, Page &page) {
 }
 
 // Class page
-void Selectable::addItem(string item) {
-    _items.push_back(item);
+/**
+ * @brief Add an item to the page
+ * 
+ * @param selectable 
+ */
+void Page::addSelectable(Selectable selectable) {
+    _selectables.push_back(selectable);
 }
 
-void Selectable::removeItem(int id) {
-    if (id >= this->getItems().size() || id < 0) {
-        string msg = concatenateString({ "Exception at removing page item id: ", std::to_string(id), " at page size: ", std::to_string(_items.size()), "\n" });
-        if (this->menuManager() == nullptr) {
-            cout << "Invalid operation to orphan page\n";
-            return;
-        }
-        (*this->menuManager()).print(msg, Color::RED);
-        return;
+/**
+ * @brief Remove an item from the page, throw exception if the operation failed
+ * 
+ * @param id 
+ */
+void Page::removeItem(int id) {
+    if (id >= _selectables.size() || id < 0) {
+        string msg = concatenateString({ "Exception at removing page item id: ", std::to_string(id), " at page size: ", std::to_string(_selectables.size()), "\n" });
+        throw std::invalid_argument(msg);
     }
-    _items.erase(_items.begin() + id);
+    _selectables.erase(_selectables.begin() + id);
 }
 
-SelectableNavigator Selectable::getNavigator(int id) {
-    if (id >= this->getNavigators().size() || id < 0) {
-        string msg = concatenateString({ "Exception at getting page navigator id: ", std::to_string(id), " from page size: ", std::to_string(_navs.size()), "\n" });
-        if (this->menuManager() == nullptr) {
-            cout << "Invalid operation to orphan page\n";
-            return nullptr;
-        }
-        (*this->menuManager()).print(msg, Color::RED);
-        return nullptr;
+/**
+ * @brief Get a Selectable item, throw exception if the operation failed
+ * 
+ * @param id 
+ * @return Selectable 
+ */
+Selectable Page::getSelectable(int id) {
+    if (id >= _selectables.size() || id < 0) {
+        string msg = concatenateString({ "Exception at getting page navigator id: ", std::to_string(id), " from page size: ", std::to_string(_selectables.size()), "\n" });
+        throw std::invalid_argument( "received negative value" );
     }
-    return _navs[id];
+    return _selectables[id];
+}
+
+void Page::allDoNothing() {
+    vector<Selectable>& selectables = _selectables;
+    Page::doNothingVector(selectables);
+}
+
+void Page::doNothingVector(vector<Selectable>& list) {
+    for(Selectable& i : list) i.setAction(&Menu::doNothing);
 }

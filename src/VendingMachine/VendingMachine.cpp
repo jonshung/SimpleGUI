@@ -1,46 +1,84 @@
 #include "VendingMachine.h"
 
-Selectable VendingMachine::initDefaultPage(Menu* m) {
-    vector<string> items;
-    vector<SelectableNavigator> nav;
-    items.push_back("1. Snacks");
-    items.push_back("2. Drinks");
-    items.push_back("3. Quit");
+VendingMachine::VendingMachine() {
+    this->loadPage(VendingMachine::initDefaultPage());
+}
 
-    nav.push_back(&VendingMachine::initSnacksPage);
-    nav.push_back(&VendingMachine::initDrinksPage);
-    nav.push_back(&Menu::initQuit);
+Page VendingMachine::initDefaultPage() {
+    vector<Selectable> selectables;
+    selectables.push_back(Selectable("1. Snacks", &VendingMachine::directSnacksPage));
+    selectables.push_back(Selectable("2. Drinks", &VendingMachine::doNothing));
+    selectables.push_back(Selectable("3. Quit", &VendingMachine::initQuit));
 
-    Selectable defaultPage(m, "Home", items, nav);
-    defaultPage.setPage();
+    Page defaultPage("Home", selectables);
     return defaultPage;
 }
 
-Selectable VendingMachine::initSnacksPage(Menu* m) {
-    vector<string> items;
-    items.push_back("1. Lays");
-    items.push_back("2. smth2");
-    items.push_back("3. smth3");
-    items.push_back("4. smth4");
-    items.push_back("5. Back");
+void VendingMachine::directDefaultPage(Menu* m, Page &page) {
+    try {
+        m->setSelection(page, 0);
+    } catch (const std::invalid_argument& e) {
+        cout << e.what() << endl;
+    }
+    page = VendingMachine::initDefaultPage();
+    m->setDirect(true);
+}
 
-    vector<SelectableNavigator> navs(items.size(), &Menu::doNothing);
+Page VendingMachine::initSnacksPage() {
+    vector<Selectable> selectables;
+    selectables.push_back(Selectable("1. Snack 1"));
+    selectables.push_back(Selectable("2. Snack 2"));
+    selectables.push_back(Selectable("3. Snack 3"));
+    selectables.push_back(Selectable("4. Snack 4"));
+    Page::doNothingVector(selectables);
+    selectables[0].setAction(&VendingMachine::input);
 
-    navs[4] = &VendingMachine::initDefaultPage;
+    selectables.push_back(Selectable("5. Back", &VendingMachine::directDefaultPage));
 
-    Selectable snacksPage(m, "Snacks", items, navs);
-    snacksPage.setPage();
+    Page snacksPage("Snacks", selectables);
     return snacksPage;
 }
 
-Selectable VendingMachine::initDrinksPage(Menu* m) {
-    Selectable drinksPage("Drinks");
-    drinksPage.setPage();
+void VendingMachine::directSnacksPage(Menu* m, Page &page) {
+    try {
+        m->setSelection(page, 0);
+    } catch (const std::invalid_argument& e) {
+        cout << e.what() << endl;
+    }
+    page = VendingMachine::initSnacksPage();
+    m->setDirect(true);
+}
+
+void VendingMachine::directDrinksPage(Menu* m, Page &page) {
+    try {
+        m->setSelection(page, 0);
+    } catch (const std::invalid_argument& e) {
+        cout << e.what() << endl;
+    }
+    m->setDirect(true);
+}
+
+void VendingMachine::directProductPage(Menu* m, Page &page) {
+    try {
+        m->setSelection(page, 0);
+    } catch (const std::invalid_argument& e) {
+        cout << e.what() << endl;
+    }
+    m->setDirect(true);
+}
+
+void VendingMachine::input(Menu* m, Page &page) {
+    std::string buffer;
+    std::cout << "\n> ";
+    std::getline(std::cin, buffer);
+}
+
+Page VendingMachine::initDrinksPage() {
+    Page drinksPage("Drinks");
     return drinksPage;
 }
 
-Selectable VendingMachine::initProductPage(Menu* m) {
-    Selectable productPage(m, "Product");
-    productPage.setPage();
+Page VendingMachine::initProductPage() {
+    Page productPage("Product");
     return productPage;
 }

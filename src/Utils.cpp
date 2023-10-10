@@ -11,8 +11,6 @@ void clearScreen() {
 
 std::string concatenateString(std::initializer_list<std::string> params) {
     std::stringstream result;
-    for(auto i : params) {
-        result << i;
-    }
+    for(auto i : params) result << i;
     return result.str();
 }
