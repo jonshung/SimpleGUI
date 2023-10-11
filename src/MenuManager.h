@@ -8,7 +8,7 @@
 #include <conio.h>
 #include <stdexcept>
 
-#include "Utils.h"
+#include "utils/GeneralUtils.h"
 
 using std::cout, std::endl;
 using std::vector;
@@ -27,12 +27,14 @@ typedef void (*SelectableAction)(Menu*, Page&);
 
 class Menu {
 private:
+    string _menuName;
     int _bgColor;
     int _defaultTextColor;
     HANDLE _WindowsHandle = nullptr;
     int _currentSelection;
     bool _direct;
 public:
+    virtual string getMenuName();
     int bgColor() { return _bgColor; }
     int defaultTextColor() { return _defaultTextColor; }
     int currentSelection() { return _currentSelection; }
@@ -56,23 +58,26 @@ class Page {
 private:
     std::string _title = "";
     std::vector<Selectable> _selectables;
+    int _initialSelection;
     Page();
 
 public:
     string title() { return _title; }
-    vector<Selectable> getSelectables() { return _selectables; }
+    int initialSelection() { return _initialSelection; }
+    void setInitialSelection(int id);
+    vector<Selectable>& getSelectables() { return _selectables; }
 
     Selectable getSelectable(int id);
     void addSelectable(Selectable Selectable);
     void removeItem(int id);
-    void allDoNothing();
-
-    static void doNothingVector(vector<Selectable>& list);
+    static void setSelectablesActions(vector<Selectable>& list, SelectableAction action);
 
     Page(string title) {
+        _initialSelection = 0;
         _title = title;
     }
     Page(string title, vector<Selectable> selectables) {
+        _initialSelection = 0;
         _title = title;
         _selectables = selectables;
     }

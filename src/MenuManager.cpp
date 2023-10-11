@@ -43,7 +43,7 @@ void Menu::print(string prompt, int color) {
 void Menu::loadPage(Page page) {
     vector<Selectable> selectables = page.getSelectables();
     if(this->direct()) {
-        this->forceSetSelection(0);
+        this->forceSetSelection(page.initialSelection());
         this->setDirect(false);
     }
     clearScreen();
@@ -119,7 +119,11 @@ void Menu::eventListener(Page page) {
                 break;
             }
 
-            (dest.getAction())(this, page);
+            try {
+                (dest.getAction())(this, page);
+            } catch(const std::invalid_argument& e) {
+                this->print(e.what(), Color::RED);
+            }
             updateFlag = true;
         }
         if (updateFlag) break;
@@ -173,6 +177,10 @@ void Menu::initQuit(Menu* m, Page &page) {
 void Menu::doNothing(Menu* m, Page &page) {
 }
 
+string Menu::getMenuName() {
+    return _menuName;
+}
+
 // Class page
 /**
  * @brief Add an item to the page
@@ -210,11 +218,14 @@ Selectable Page::getSelectable(int id) {
     return _selectables[id];
 }
 
-void Page::allDoNothing() {
-    vector<Selectable>& selectables = _selectables;
-    Page::doNothingVector(selectables);
+void Page::setSelectablesActions(vector<Selectable>& list, SelectableAction action) {
+    for(Selectable& i : list) i.setAction(action);
 }
 
-void Page::doNothingVector(vector<Selectable>& list) {
-    for(Selectable& i : list) i.setAction(&Menu::doNothing);
+void Page::setInitialSelection(int id) {
+    if(id >= this->getSelectables().size()) {
+        string msg = concatenateString({"Incorrect Initial selection value of ", std::to_string(id), " in page size: ", std::to_string(this->getSelectables().size())});
+        throw std::invalid_argument(msg);
+    }
+    _initialSelection = id;
 }
