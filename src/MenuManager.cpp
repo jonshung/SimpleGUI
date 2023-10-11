@@ -36,26 +36,46 @@ void Menu::print(string prompt, int color) {
 }
 
 /**
- * @brief Standard procedure to load a page, throw an exception if the number of displaying items is not equal to the number of selectables
+ * @brief Page loading pipeline (Do not overload)
  * 
  * @param page 
  */
 void Menu::loadPage(Page page) {
+    this->preloadPage(page);
+    this->render(page);
+    this->postLoadPage(page);
+}
+
+void Menu::preloadPage(Page page) {
+    clearScreen();
+}
+
+/**
+ * @brief Standard procedure to render a page, throw an exception if the number of displaying items is not equal to the number of selectables
+ * 
+ * @param page 
+ */
+void Menu::render(Page page) {
     vector<Selectable> selectables = page.getSelectables();
     if(this->direct()) {
         this->forceSetSelection(page.initialSelection());
         this->setDirect(false);
     }
-    clearScreen();
     this->print(page.title(), Color::GREEN);
     this->print("");
     for (int i = 0; i < selectables.size(); i++) {
         if (this->currentSelection() == i) this->print(selectables[i].label(), Color::PALE_YELLOW);
         else this->print(selectables[i].label(), this->defaultTextColor());
     }
-    // TODO: FINISH
-    this->eventListener(page);
+}
 
+/**
+ * @brief Handle event listening constructor
+ * 
+ * @param page 
+ */
+void Menu::postLoadPage(Page page) {
+    this->eventListener(page);
 }
 
 /**
@@ -179,6 +199,18 @@ void Menu::doNothing(Menu* m, Page &page) {
 
 string Menu::getMenuName() {
     return _menuName;
+}
+
+/**
+ * @brief Do no cast since this is the base class
+ * 
+ * @tparam T
+ * @param m 
+ * @return T*
+ */
+template<typename T>
+T* Menu::linker(Menu *m) {
+    return m;
 }
 
 // Class page

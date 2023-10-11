@@ -9,6 +9,11 @@ VendingMachine::VendingMachine() {
     _orderHandler = UserOrder();
 }
 
+void VendingMachine::render(Page page) {
+    this->print("Brought to you by Kiet Hung!", Color::NAVY);
+    Menu::render(page);
+}
+
 /**
  * @brief Intitiate a Default Page object
  * 
@@ -136,10 +141,7 @@ void VendingMachine::directUserOrderPage(Menu* m, Page &page) {
  * @param page 
  */
 void VendingMachine::requestAddSnackOrder(Menu* m, Page &page) {
-    VendingMachine *menuHandler = dynamic_cast<VendingMachine*>(m);
-    if(menuHandler == NULL) {
-        throw std::invalid_argument(concatenateString({"Invalid casting from ", typeid(m).name(), " to ", typeid(m).name()}));
-    }
+    VendingMachine* menuHandler = VendingMachine::linker<VendingMachine>(m);
     (menuHandler->userOrderHandler()).addOrder(menuHandler->currentSelection());
     menuHandler->print("\nAdded order successfully! Press any character to continue...", Color::GREEN);
     _getch();
@@ -152,13 +154,26 @@ void VendingMachine::requestAddSnackOrder(Menu* m, Page &page) {
  * @param page 
  */
 void VendingMachine::requestAddDrinkOrder(Menu* m, Page &page) {
+    VendingMachine* menuHandler = VendingMachine::linker<VendingMachine>(m);
+    (menuHandler->userOrderHandler()).addOrder(4 + menuHandler->currentSelection());                // Hard coded for example
+    menuHandler->print("\nAdded order successfully! Press any character to continue...", Color::GREEN);
+    _getch();
+}
+
+/**
+ * @brief Return dynamically safe downcast of Menu Object to Vending Machine Object
+ * 
+ * @tparam T
+ * @param m 
+ * @return T* 
+ */
+template<typename T>
+T* VendingMachine::linker(Menu * m) {
     VendingMachine *menuHandler = dynamic_cast<VendingMachine*>(m);
     if(menuHandler == NULL) {
         throw std::invalid_argument(concatenateString({"Invalid casting from ", typeid(m).name(), " to ", typeid(m).name()}));
     }
-    (menuHandler->userOrderHandler()).addOrder(4 + menuHandler->currentSelection());                // Hard coded for example
-    menuHandler->print("\nAdded order successfully! Press any character to continue...", Color::GREEN);
-    _getch();
+    return menuHandler;
 }
 
 /**

@@ -18,9 +18,14 @@ public:
     static void directDrinksPage(Menu* m, Page &page);
     static void directUserOrderPage(Menu* m, Page &page);
     static void doNothing(Menu*m, Page &page);
-
     static void input(Menu* m, Page &page);
+
     VendingMachine();
+    template<typename T>
+    static T* linker(Menu *);
+
+    //example render overload
+    void render(Page page);
 
     UserOrder& userOrderHandler() { return _orderHandler; }
     static void requestAddSnackOrder(Menu* m, Page &page);

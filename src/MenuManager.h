@@ -43,12 +43,17 @@ public:
     void forceSetSelection(int id);
     bool direct() { return _direct; }
     void setDirect(bool vl) { _direct = vl; }
+    template<typename T>
+    static T* linker(Menu *);
 
     Menu();
 
     void eventListener(Page page);
     void print(string prompt, int color = Color::WHITE);
-    void loadPage(Page page);
+    virtual void loadPage(Page page) final;
+    virtual void preloadPage(Page page);
+    virtual void render(Page page);
+    virtual void postLoadPage(Page page);
     void setColor(int colorId);
     static void initQuit(Menu* m, Page &page);
     static void doNothing(Menu* m, Page &page);
