@@ -1,8 +1,8 @@
 #include "FileHandler.h"
 
-nlohmann::json parseJsonFromFile(std::string filename, int &_RETURN_CODE) {
+json parseJsonFromFile(string filename, int &_RETURN_CODE) {
     std::fstream fileHandler(filename);
-    nlohmann::json data;
+    json data;
     if(!fileHandler.is_open()) {
         std::cout << "Cannot open file " << filename << std::endl;
         _RETURN_CODE = FileHandlingFlag::CANNOT_OPEN_FILE;
@@ -10,8 +10,8 @@ nlohmann::json parseJsonFromFile(std::string filename, int &_RETURN_CODE) {
     }
 
     try {
-        data = nlohmann::json::parse(fileHandler);
-    } catch (const nlohmann::json::parse_error& e) {
+        data = json::parse(fileHandler);
+    } catch (const json::parse_error& e) {
         std::cout << e.what() << std::endl;
     }
     _RETURN_CODE = FileHandlingFlag::SUCESS;

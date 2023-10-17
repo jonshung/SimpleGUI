@@ -1,4 +1,5 @@
 #include "MenuManager.h"
+#include <filesystem>
 
 /**
  * @brief Construct a new Menu:: Menu object
@@ -7,9 +8,15 @@
 Menu::Menu() {
     _direct = false;
     _WindowsHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-    _bgColor = Color::BLACK;
-    _defaultTextColor = Color::WHITE;
     _currentSelection = 0;
+    this->_lang = ConfigManager("us.json");
+    this->_style = ConfigManager("style.json");
+
+    std::filesystem::path cwd = std::filesystem::current_path();
+    _bgColor = _style.get("defaultBackgroundColor");
+    _bgColor = (_bgColor == -1) ? Color::BLACK : _bgColor;
+    _defaultTextColor = _style.get("defaultTextColor");
+    _defaultTextColor = (_defaultTextColor == -1) ? Color::WHITE : _defaultTextColor;
 }
 
 /**
@@ -30,6 +37,7 @@ void Menu::setColor(int colorId) {
  * @param color 
  */
 void Menu::print(string prompt, int color) {
+    color = (color == -1) ? this->defaultTextColor() : color;
     this->setColor(color);
     cout << prompt << endl;
     this->setColor(this->defaultTextColor());
@@ -102,6 +110,7 @@ void Menu::eventListener(Page page) {
                         dest = page.getSelectable(selection);
                     } catch(const std::invalid_argument& e) {
                         cout << e.what() << endl;
+                        break;
                     }
                     if (dest.getAction() != nullptr) {
                         this->setSelection(page, selection);
@@ -119,6 +128,7 @@ void Menu::eventListener(Page page) {
                         dest = page.getSelectable(selection);
                     } catch(const std::invalid_argument& e) {
                         cout << e.what() << endl;
+                        break;
                     }
                     if (dest.getAction() != nullptr) {
                         this->setSelection(page, selection);
@@ -143,6 +153,7 @@ void Menu::eventListener(Page page) {
                 (dest.getAction())(this, page);
             } catch(const std::invalid_argument& e) {
                 this->print(e.what(), Color::RED);
+                continue;
             }
             updateFlag = true;
         }
@@ -161,7 +172,7 @@ void Menu::setDefaultTextColor(int color) {
 }
 
 /**
- * @brief Set current user's selection, throw an exception if the selection cannot be found
+ * @brief Safely set current user's selection, throw an exception if the selection cannot be found
  * 
  * @param page 
  * @param id 
@@ -176,7 +187,7 @@ void Menu::setSelection(Page page, int id) {
 }
 
 /**
- * @brief This should only be used when we are certain the selection is available
+ * @brief Explicitly set the menu current selection. This should only be used when the selection is knowingly available.
  * 
  * @param id 
  */
@@ -188,7 +199,8 @@ void Menu::forceSetSelection(int id) {
  * @brief Default quitting action
  */
 void Menu::initQuit(Menu* m, Page &page) {
-    m->print("Quitting program...", Color::GRAY);
+    string msg = (*m)._lang.get("quitMessage");
+    m->print(msg, Color::GRAY);
 }
 
 /**
@@ -250,10 +262,21 @@ Selectable Page::getSelectable(int id) {
     return _selectables[id];
 }
 
+/**
+ * @brief Set all selection in a given vector to a Selectable Action
+ * 
+ * @param list 
+ * @param action 
+ */
 void Page::setSelectablesActions(vector<Selectable>& list, SelectableAction action) {
     for(Selectable& i : list) i.setAction(action);
 }
 
+/**
+ * @brief Safely set the initial selection of the page based on size constraint
+ * 
+ * @param id 
+ */
 void Page::setInitialSelection(int id) {
     if(id >= this->getSelectables().size()) {
         string msg = concatenateString({"Incorrect Initial selection value of ", std::to_string(id), " in page size: ", std::to_string(this->getSelectables().size())});

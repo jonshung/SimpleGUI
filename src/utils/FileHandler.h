@@ -3,9 +3,12 @@
 #include <iostream>
 #include "src/libs/json.hpp"
 
+using nlohmann::json;
+using std::string;
+
 enum FileHandlingFlag {
     SUCESS = 0,
     CANNOT_OPEN_FILE = 1
 };
 
-nlohmann::json parseJsonFromFile(std::string filename, int &_RETURN_CODE);
+json parseJsonFromFile(string filename, int &_RETURN_CODE);

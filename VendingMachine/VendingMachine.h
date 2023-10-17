@@ -3,6 +3,7 @@
 
 #include "src/MenuManager.h"
 #include "UserOrderHandler.h"
+#include "src/utils/Config.h"
 
 class VendingMachine : public Menu {
 private:

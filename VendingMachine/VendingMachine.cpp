@@ -6,11 +6,12 @@
  */
 VendingMachine::VendingMachine() {
     this->loadPage(VendingMachine::initDefaultPage());
-    _orderHandler = UserOrder();
+    //this->_lang = ConfigManager("VendingMachine/us.json");
+    //this->_style = ConfigManager("style.json");
+    this->_orderHandler = UserOrder();
 }
 
 void VendingMachine::render(Page page) {
-    this->print("Brought to you by Kiet Hung!", Color::NAVY);
     Menu::render(page);
 }
 
@@ -21,6 +22,7 @@ void VendingMachine::render(Page page) {
  */
 Page VendingMachine::initDefaultPage() {
     vector<Selectable> selectables;
+    
     selectables.push_back(Selectable("1. Snacks", &VendingMachine::directSnacksPage));
     selectables.push_back(Selectable("2. Drinks", &VendingMachine::directDrinksPage));
     selectables.push_back(Selectable("4. Your orders", &VendingMachine::directUserOrderPage));

@@ -8,6 +8,7 @@
 #include <conio.h>
 #include <stdexcept>
 
+#include "utils/Config.h"
 #include "utils/GeneralUtils.h"
 
 using std::cout, std::endl;
@@ -34,6 +35,9 @@ private:
     int _currentSelection;
     bool _direct;
 public:
+    ConfigManager _lang;
+    ConfigManager _style;
+    
     virtual string getMenuName();
     int bgColor() { return _bgColor; }
     int defaultTextColor() { return _defaultTextColor; }
@@ -49,7 +53,7 @@ public:
     Menu();
 
     void eventListener(Page page);
-    void print(string prompt, int color = Color::WHITE);
+    void print(string prompt, int color = -1);
     virtual void loadPage(Page page) final;
     virtual void preloadPage(Page page);
     virtual void render(Page page);
