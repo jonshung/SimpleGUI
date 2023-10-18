@@ -1,88 +1,106 @@
 #include "MenuManager.h"
-#include <filesystem>
+
+int MenuManager::defaultTextColor() { 
+    return _defaultTextColor; 
+}
+
+int MenuManager::bgColor() { 
+    return _bgColor; 
+}
+
+int MenuManager::currentSelection() { 
+    return _currentSelection; 
+}
+
+bool MenuManager::direct() { 
+    return _direct; 
+}
+
+void MenuManager::setDirect(bool vl) { 
+    _direct = vl; 
+}
 
 /**
- * @brief Construct a new Menu:: Menu object
- * 
+ * @brief Construct a new MenuManager:: MenuManager object
+ *
  */
-Menu::Menu() {
+MenuManager::MenuManager() {
     _direct = false;
     _WindowsHandle = GetStdHandle(STD_OUTPUT_HANDLE);
     _currentSelection = 0;
-    this->_lang = ConfigManager("us.json");
-    this->_style = ConfigManager("style.json");
+    this->_lang = ConfigManager("config/us.json");
+    this->_style = ConfigManager("config/style.json");
 
-    std::filesystem::path cwd = std::filesystem::current_path();
-    _bgColor = _style.get("defaultBackgroundColor");
+    _bgColor = _style.get<int>("defaultBackgroundColor");
     _bgColor = (_bgColor == -1) ? Color::BLACK : _bgColor;
-    _defaultTextColor = _style.get("defaultTextColor");
+    _defaultTextColor = _style.get<int>("defaultTextColor");
     _defaultTextColor = (_defaultTextColor == -1) ? Color::WHITE : _defaultTextColor;
 }
 
 /**
  * @brief Set current text color
- * 
- * @param colorId 
+ *
+ * @param colorId
  */
-void Menu::setColor(int colorId) {
+void MenuManager::setColor(int colorId) {
     HANDLE WindowsHandler = this->_WindowsHandle;
     int colorOffset = getTextColor(colorId, this->bgColor());
     SetConsoleTextAttribute(WindowsHandler, colorId);
 }
 
 /**
- * @brief Print a string to screen and add a newline character at the end
- * 
- * @param prompt 
- * @param color 
+ * @brief Print a std::string to screen and add a newline character at the end
+ *
+ * @param prompt
+ * @param color
  */
-void Menu::print(string prompt, int color) {
+void MenuManager::print(std::string prompt, int color) {
     color = (color == -1) ? this->defaultTextColor() : color;
     this->setColor(color);
-    cout << prompt << endl;
+    std::cout << prompt << std::endl;
     this->setColor(this->defaultTextColor());
 }
 
 /**
  * @brief Page loading pipeline (Do not overload)
- * 
- * @param page 
+ *
+ * @param page
  */
-void Menu::loadPage(Page page) {
+void MenuManager::loadPage(Page page) {
     this->preloadPage(page);
     this->render(page);
     this->postLoadPage(page);
 }
 
-void Menu::preloadPage(Page page) {
+void MenuManager::preloadPage(Page page) {
     clearScreen();
 }
 
 /**
  * @brief Standard procedure to render a page, throw an exception if the number of displaying items is not equal to the number of selectables
- * 
- * @param page 
+ *
+ * @param page
  */
-void Menu::render(Page page) {
-    vector<Selectable> selectables = page.getSelectables();
-    if(this->direct()) {
+void MenuManager::render(Page page) {
+    std::vector<Selectable> selectables = page.getSelectables();
+    if (this->direct()) {
         this->forceSetSelection(page.initialSelection());
         this->setDirect(false);
     }
-    this->print(page.title(), Color::GREEN);
+    this->print(page.title(), this->_style.get<int>("titleColor"));
     this->print("");
     for (int i = 0; i < selectables.size(); i++) {
-        if (this->currentSelection() == i) this->print(selectables[i].label(), Color::PALE_YELLOW);
+        if (this->currentSelection() == i) this->print(selectables[i].label(), this->_style.get<int>("selectingColor"));
         else this->print(selectables[i].label(), this->defaultTextColor());
     }
 }
 
 /**
  * @brief Handle event listening constructor
- * 
- * @param page 
+ *
+ * @param page
  */
-void Menu::postLoadPage(Page page) {
+void MenuManager::postLoadPage(Page page) {
     this->eventListener(page);
 }
 
@@ -92,7 +110,7 @@ void Menu::postLoadPage(Page page) {
  *
  * @param page
  */
-void Menu::eventListener(Page page) {
+void MenuManager::eventListener(Page page) {
     bool updateFlag = false;
     bool quitFlag = false;
     while (true) {
@@ -108,11 +126,12 @@ void Menu::eventListener(Page page) {
                     Selectable dest;
                     try {
                         dest = page.getSelectable(selection);
-                    } catch(const std::invalid_argument& e) {
-                        cout << e.what() << endl;
+                    }
+                    catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         break;
                     }
-                    if (dest.getAction() != nullptr) {
+                    if (dest.getAction().getModule() != nullptr) {
                         this->setSelection(page, selection);
                         updateFlag = true;
                         break;
@@ -126,11 +145,12 @@ void Menu::eventListener(Page page) {
                     Selectable dest;
                     try {
                         dest = page.getSelectable(selection);
-                    } catch(const std::invalid_argument& e) {
-                        cout << e.what() << endl;
+                    }
+                    catch (const std::invalid_argument& e) {
+                        std::cout << e.what() << std::endl;
                         break;
                     }
-                    if (dest.getAction() != nullptr) {
+                    if (dest.getAction().getModule() != nullptr) {
                         this->setSelection(page, selection);
                         updateFlag = true;
                         break;
@@ -143,15 +163,17 @@ void Menu::eventListener(Page page) {
         }
         if (Keys::Enter == key) {
             Selectable dest = page.getSelectable(this->currentSelection());
-            if (dest.getAction() == nullptr) continue;
-            if (dest.getAction() == (void*) &initQuit) {
+            if (dest.getAction().getModule() == nullptr) continue;
+            if (dest.getAction().isQuit()) {
                 quitFlag = true;
+                (dest.getAction().getModule())(this, page);
                 break;
             }
 
             try {
-                (dest.getAction())(this, page);
-            } catch(const std::invalid_argument& e) {
+                (dest.getAction().getModule())(this, page);
+            }
+            catch (const std::exception& e) {
                 this->print(e.what(), Color::RED);
                 continue;
             }
@@ -164,22 +186,23 @@ void Menu::eventListener(Page page) {
 
 /**
  * @brief Get default menu color
- * 
- * @param color 
+ *
+ * @param color
  */
-void Menu::setDefaultTextColor(int color) {
+void MenuManager::setDefaultTextColor(int color) {
     this->_defaultTextColor = color;
 }
 
 /**
  * @brief Safely set current user's selection, throw an exception if the selection cannot be found
- * 
- * @param page 
- * @param id 
+ *
+ * @param page
+ * @param id
  */
-void Menu::setSelection(Page page, int id) {
+void MenuManager::setSelection(Page page, int id) {
     if (id >= page.getSelectables().size()) {
-        string msg = concatenateString({ "Exception at trying to select navigator ", std::to_string(id), " in page navigator size: ", std::to_string(page.getSelectables().size()), "\n" });
+        std::string msg = concatenateString({ "Exception at trying to select navigator ", std::to_string(id), " in page navigator size: ", 
+                                            std::to_string(page.getSelectables().size()), "\n" });
         this->print(msg, Color::RED);
         return;
     }
@@ -188,99 +211,37 @@ void Menu::setSelection(Page page, int id) {
 
 /**
  * @brief Explicitly set the menu current selection. This should only be used when the selection is knowingly available.
- * 
- * @param id 
+ *
+ * @param id
  */
-void Menu::forceSetSelection(int id) {
+void MenuManager::forceSetSelection(int id) {
     this->_currentSelection = id;
 }
 
 /**
  * @brief Default quitting action
  */
-void Menu::initQuit(Menu* m, Page &page) {
-    string msg = (*m)._lang.get("quitMessage");
+void MenuManager::initQuit(MenuManager* m, Page& page) {
+    std::string msg = (*m)._lang.get<std::string>("quitMessage");
     m->print(msg, Color::GRAY);
 }
 
 /**
  * @brief This function is a placeholder for selectable that doesn't have any action
  */
-void Menu::doNothing(Menu* m, Page &page) {
+void MenuManager::doNothing(MenuManager* m, Page& page) {
 }
 
-string Menu::getMenuName() {
+std::string MenuManager::getMenuName() {
     return _menuName;
 }
 
 /**
- * @brief Do no cast since this is the base class
- * 
- * @tparam T
- * @param m 
- * @return T*
+ * @brief Provide an interface to cast from base MenuManager to child class
+ * @note Returning type must be a pointer covariant with MenuManager
+ *
+ * @return MenuManager*
  */
-template<typename T>
-T* Menu::linker(Menu *m) {
+MenuManager* MenuManager::linker(MenuManager* m) {
     return m;
-}
-
-// Class page
-/**
- * @brief Add an item to the page
- * 
- * @param selectable 
- */
-void Page::addSelectable(Selectable selectable) {
-    _selectables.push_back(selectable);
-}
-
-/**
- * @brief Remove an item from the page, throw exception if the operation failed
- * 
- * @param id 
- */
-void Page::removeItem(int id) {
-    if (id >= _selectables.size() || id < 0) {
-        string msg = concatenateString({ "Exception at removing page item id: ", std::to_string(id), " at page size: ", std::to_string(_selectables.size()), "\n" });
-        throw std::invalid_argument(msg);
-    }
-    _selectables.erase(_selectables.begin() + id);
-}
-
-/**
- * @brief Get a Selectable item, throw exception if the operation failed
- * 
- * @param id 
- * @return Selectable 
- */
-Selectable Page::getSelectable(int id) {
-    if (id >= _selectables.size() || id < 0) {
-        string msg = concatenateString({ "Exception at getting page navigator id: ", std::to_string(id), " from page size: ", std::to_string(_selectables.size()), "\n" });
-        throw std::invalid_argument( "received negative value" );
-    }
-    return _selectables[id];
-}
-
-/**
- * @brief Set all selection in a given vector to a Selectable Action
- * 
- * @param list 
- * @param action 
- */
-void Page::setSelectablesActions(vector<Selectable>& list, SelectableAction action) {
-    for(Selectable& i : list) i.setAction(action);
-}
-
-/**
- * @brief Safely set the initial selection of the page based on size constraint
- * 
- * @param id 
- */
-void Page::setInitialSelection(int id) {
-    if(id >= this->getSelectables().size()) {
-        string msg = concatenateString({"Incorrect Initial selection value of ", std::to_string(id), " in page size: ", std::to_string(this->getSelectables().size())});
-        throw std::invalid_argument(msg);
-    }
-    _initialSelection = id;
 }

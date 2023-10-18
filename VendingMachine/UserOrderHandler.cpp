@@ -4,7 +4,7 @@ void UserOrder::addOrder(int orderId) {
     _orders.push_back(orderId);
 }
 
-vector<int>& UserOrder::getOrders() {
+std::vector<int>& UserOrder::getOrders() {
     return this->_orders;
 }
 

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "VendingMachine/VendingMachine.h"
+#include "VendingMachine.h"
 
 using namespace std;
 

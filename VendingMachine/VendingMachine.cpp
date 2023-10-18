@@ -12,7 +12,7 @@ VendingMachine::VendingMachine() {
 }
 
 void VendingMachine::render(Page page) {
-    Menu::render(page);
+    MenuManager::render(page);
 }
 
 /**
@@ -21,12 +21,12 @@ void VendingMachine::render(Page page) {
  * @return Page 
  */
 Page VendingMachine::initDefaultPage() {
-    vector<Selectable> selectables;
+    std::vector<Selectable> selectables;
     
     selectables.push_back(Selectable("1. Snacks", &VendingMachine::directSnacksPage));
     selectables.push_back(Selectable("2. Drinks", &VendingMachine::directDrinksPage));
-    selectables.push_back(Selectable("4. Your orders", &VendingMachine::directUserOrderPage));
-    selectables.push_back(Selectable("3. Quit", &VendingMachine::initQuit));
+    selectables.push_back(Selectable("3. Your orders", &VendingMachine::directUserOrderPage));
+    selectables.push_back(Selectable("4. Quit", &VendingMachine::initQuit, true));
 
     Page defaultPage("Home", selectables);
     return defaultPage;
@@ -38,7 +38,7 @@ Page VendingMachine::initDefaultPage() {
  * @param m 
  * @param page 
  */
-void VendingMachine::directDefaultPage(Menu* m, Page &page) {
+void VendingMachine::directDefaultPage(MenuManager* m, Page &page) {
     page = VendingMachine::initDefaultPage();
     m->setDirect(true);
 }
@@ -49,7 +49,7 @@ void VendingMachine::directDefaultPage(Menu* m, Page &page) {
  * @return Page 
  */
 Page VendingMachine::initSnacksPage() {
-    vector<Selectable> selectables;
+    std::vector<Selectable> selectables;
     selectables.push_back(Selectable("1. Snack 1"));
     selectables.push_back(Selectable("2. Snack 2"));
     selectables.push_back(Selectable("3. Snack 3"));
@@ -67,7 +67,7 @@ Page VendingMachine::initSnacksPage() {
  * @param m 
  * @param page 
  */
-void VendingMachine::directSnacksPage(Menu* m, Page &page) {
+void VendingMachine::directSnacksPage(MenuManager* m, Page &page) {
     page = VendingMachine::initSnacksPage();
     m->setDirect(true);
 }
@@ -79,7 +79,7 @@ void VendingMachine::directSnacksPage(Menu* m, Page &page) {
  * @param page 
  */
 Page VendingMachine::initDrinksPage() {
-    vector<Selectable> selectables;
+    std::vector<Selectable> selectables;
     selectables.push_back(Selectable("1. Drink 1"));
     selectables.push_back(Selectable("2. Drink 2"));
     selectables.push_back(Selectable("3. Drink 3"));
@@ -96,7 +96,7 @@ Page VendingMachine::initDrinksPage() {
  * @param m 
  * @param page 
  */
-void VendingMachine::directDrinksPage(Menu* m, Page &page) {
+void VendingMachine::directDrinksPage(MenuManager* m, Page &page) {
     page = VendingMachine::initDrinksPage();
     m->setDirect(true);
 }
@@ -119,7 +119,7 @@ Page VendingMachine::initUserOrderPage() {
  * @param m 
  * @param page 
  */
-void VendingMachine::directUserOrderPage(Menu* m, Page &page) {
+void VendingMachine::directUserOrderPage(MenuManager* m, Page &page) {
     VendingMachine *menuHandler = dynamic_cast<VendingMachine*>(m);
     if(menuHandler == NULL) {
         throw std::invalid_argument(concatenateString({"Invalid casting from ", typeid(m).name(), " to ", typeid(m).name()}));
@@ -142,7 +142,7 @@ void VendingMachine::directUserOrderPage(Menu* m, Page &page) {
  * @param m 
  * @param page 
  */
-void VendingMachine::requestAddSnackOrder(Menu* m, Page &page) {
+void VendingMachine::requestAddSnackOrder(MenuManager* m, Page &page) {
     VendingMachine* menuHandler = VendingMachine::linker<VendingMachine>(m);
     (menuHandler->userOrderHandler()).addOrder(menuHandler->currentSelection());
     menuHandler->print("\nAdded order successfully! Press any character to continue...", Color::GREEN);
@@ -155,7 +155,7 @@ void VendingMachine::requestAddSnackOrder(Menu* m, Page &page) {
  * @param m 
  * @param page 
  */
-void VendingMachine::requestAddDrinkOrder(Menu* m, Page &page) {
+void VendingMachine::requestAddDrinkOrder(MenuManager* m, Page &page) {
     VendingMachine* menuHandler = VendingMachine::linker<VendingMachine>(m);
     (menuHandler->userOrderHandler()).addOrder(4 + menuHandler->currentSelection());                // Hard coded for example
     menuHandler->print("\nAdded order successfully! Press any character to continue...", Color::GREEN);
@@ -163,14 +163,14 @@ void VendingMachine::requestAddDrinkOrder(Menu* m, Page &page) {
 }
 
 /**
- * @brief Return dynamically safe downcast of Menu Object to Vending Machine Object
+ * @brief Return dynamically safe downcast of MenuManager Object to Vending Machine Object
  * 
  * @tparam T
  * @param m 
  * @return T* 
  */
 template<typename T>
-T* VendingMachine::linker(Menu * m) {
+T* VendingMachine::linker(MenuManager * m) {
     VendingMachine *menuHandler = dynamic_cast<VendingMachine*>(m);
     if(menuHandler == NULL) {
         throw std::invalid_argument(concatenateString({"Invalid casting from ", typeid(m).name(), " to ", typeid(m).name()}));
@@ -187,7 +187,7 @@ T* VendingMachine::linker(Menu * m) {
  * @param m 
  * @param page 
  */
-void VendingMachine::input(Menu* m, Page &page) {
+void VendingMachine::input(MenuManager* m, Page &page) {
     std::string buffer;
     std::cout << "\n> ";
     std::getline(std::cin, buffer);

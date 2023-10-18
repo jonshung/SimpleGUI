@@ -1,6 +1,6 @@
 #include "FileHandler.h"
 
-json parseJsonFromFile(string filename, int &_RETURN_CODE) {
+json parseJsonFromFile(std::string filename, int &_RETURN_CODE) {
     std::fstream fileHandler(filename);
     json data;
     if(!fileHandler.is_open()) {

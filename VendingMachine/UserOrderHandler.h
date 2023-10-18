@@ -4,9 +4,8 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include "src/utils/GeneralUtils.h"
-
-using std::vector, std::fstream;
+#include "Constant.h"
+#include "GeneralUtils.h"
 
 enum ProductsID {
     SNACK1 = 0,
@@ -20,9 +19,9 @@ enum ProductsID {
 
 class UserOrder {
 private:
-    vector<int> _orders;
+    std::vector<int> _orders;
 public:
-    vector<int>& getOrders();
+    std::vector<int>& getOrders();
     void addOrder(int orderId);
     int pop();
     void clear();

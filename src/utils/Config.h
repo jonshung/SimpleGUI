@@ -8,12 +8,13 @@
 
 class ConfigManager {
 private:
+    std::string _fileName;
     json _rawData;
-    string _fileName;
 public:
-    void loadRaw(string fileName);
-    json getRaw(string key);
+    void loadRaw(std::string);
+    template<typename T>
+    T get(std::string, json = json::value_t::null);
     ConfigManager();
-    ConfigManager(string fileName);
-    json get(string key, json obj = json::value_t::null);
+    ConfigManager(std::string);
+    json getRaw(std::string, json = json::value_t::null);
 };
