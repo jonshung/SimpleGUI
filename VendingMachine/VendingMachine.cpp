@@ -145,7 +145,7 @@ void VendingMachine::directUserOrderPage(MenuManager* m, Page &page) {
 void VendingMachine::requestAddSnackOrder(MenuManager* m, Page &page) {
     VendingMachine* menuHandler = VendingMachine::linker<VendingMachine>(m);
     (menuHandler->userOrderHandler()).addOrder(menuHandler->currentSelection());
-    menuHandler->print("\nAdded order successfully! Press any character to continue...", Color::GREEN);
+    menuHandler->outputHandler().print("\nAdded order successfully! Press any character to continue...", {Color::GREEN});
     _getch();
 }
 
@@ -158,7 +158,7 @@ void VendingMachine::requestAddSnackOrder(MenuManager* m, Page &page) {
 void VendingMachine::requestAddDrinkOrder(MenuManager* m, Page &page) {
     VendingMachine* menuHandler = VendingMachine::linker<VendingMachine>(m);
     (menuHandler->userOrderHandler()).addOrder(4 + menuHandler->currentSelection());                // Hard coded for example
-    menuHandler->print("\nAdded order successfully! Press any character to continue...", Color::GREEN);
+    menuHandler->outputHandler().print("\nAdded order successfully! Press any character to continue...", {Color::GREEN});
     _getch();
 }
 

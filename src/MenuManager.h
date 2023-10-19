@@ -2,7 +2,6 @@
 #define _MENU_MANAGER_BASE_
 
 #include <iostream>
-#include <Windows.h>
 #include <string>
 #include <vector>
 #include <conio.h>
@@ -12,16 +11,18 @@
 #include "utils/GeneralUtils.h"
 #include "Page.h"
 #include "Selectable.h"
+#include "WindowsOutput.h"
 
 class Selectable;
 class Page;
 
 class MenuManager {
 private:
+    bool _debug = false;
     std::string _menuName;
     int _bgColor;
     int _defaultTextColor;
-    HANDLE _WindowsHandle = nullptr;
+    WindowsOutput* _OutputHandler;
     int _currentSelection;
     bool _direct;
 public:
@@ -38,11 +39,11 @@ public:
     bool direct();
     void setDirect(bool);
     virtual MenuManager* linker(MenuManager*);
+    WindowsOutput outputHandler();
 
     MenuManager();
 
     void eventListener(Page);
-    void print(std::string, int = -1);
     virtual void loadPage(Page) final;
     virtual void preloadPage(Page);
     virtual void render(Page page);

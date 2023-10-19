@@ -2,17 +2,6 @@
 #include <iostream>
 
 /**
- * @brief Get the Text Color with offset respect to current background color
- * 
- * @param colorId 
- * @param backgroundColor 
- * @return int 
- */
-int getTextColor(int colorId, int backgroundColor) {
-    return colorId + backgroundColor * 16;
-}
-
-/**
  * @brief Clear the screen
  * 
  */

@@ -1,23 +1,23 @@
 #include "MenuManager.h"
 
-int MenuManager::defaultTextColor() { 
-    return _defaultTextColor; 
+int MenuManager::defaultTextColor() {
+    return _defaultTextColor;
 }
 
-int MenuManager::bgColor() { 
-    return _bgColor; 
+int MenuManager::bgColor() {
+    return _bgColor;
 }
 
-int MenuManager::currentSelection() { 
-    return _currentSelection; 
+int MenuManager::currentSelection() {
+    return _currentSelection;
 }
 
-bool MenuManager::direct() { 
-    return _direct; 
+bool MenuManager::direct() {
+    return _direct;
 }
 
-void MenuManager::setDirect(bool vl) { 
-    _direct = vl; 
+void MenuManager::setDirect(bool vl) {
+    _direct = vl;
 }
 
 /**
@@ -26,7 +26,7 @@ void MenuManager::setDirect(bool vl) {
  */
 MenuManager::MenuManager() {
     _direct = false;
-    _WindowsHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    _OutputHandler = WindowsOutput::instance();
     _currentSelection = 0;
     this->_lang = ConfigManager("config/us.json");
     this->_style = ConfigManager("config/style.json");
@@ -37,28 +37,8 @@ MenuManager::MenuManager() {
     _defaultTextColor = (_defaultTextColor == -1) ? Color::WHITE : _defaultTextColor;
 }
 
-/**
- * @brief Set current text color
- *
- * @param colorId
- */
-void MenuManager::setColor(int colorId) {
-    HANDLE WindowsHandler = this->_WindowsHandle;
-    int colorOffset = getTextColor(colorId, this->bgColor());
-    SetConsoleTextAttribute(WindowsHandler, colorId);
-}
-
-/**
- * @brief Print a std::string to screen and add a newline character at the end
- *
- * @param prompt
- * @param color
- */
-void MenuManager::print(std::string prompt, int color) {
-    color = (color == -1) ? this->defaultTextColor() : color;
-    this->setColor(color);
-    std::cout << prompt << std::endl;
-    this->setColor(this->defaultTextColor());
+WindowsOutput MenuManager::outputHandler() {
+    return *(_OutputHandler);
 }
 
 /**
@@ -73,7 +53,7 @@ void MenuManager::loadPage(Page page) {
 }
 
 void MenuManager::preloadPage(Page page) {
-    clearScreen();
+    if(!_debug) clearScreen();
 }
 
 /**
@@ -87,11 +67,10 @@ void MenuManager::render(Page page) {
         this->forceSetSelection(page.initialSelection());
         this->setDirect(false);
     }
-    this->print(page.title(), this->_style.get<int>("titleColor"));
-    this->print("");
+    outputHandler().print(page.title() + "\n", { this->_style.get<int>("titleColor") });
     for (int i = 0; i < selectables.size(); i++) {
-        if (this->currentSelection() == i) this->print(selectables[i].label(), this->_style.get<int>("selectingColor"));
-        else this->print(selectables[i].label(), this->defaultTextColor());
+        if (this->currentSelection() == i) outputHandler().print(selectables[i].label(), { this->_style.get<int>("selectingColor") });
+        else outputHandler().print(selectables[i].label(), { this->defaultTextColor() });
     }
 }
 
@@ -174,7 +153,7 @@ void MenuManager::eventListener(Page page) {
                 (dest.getAction().getModule())(this, page);
             }
             catch (const std::exception& e) {
-                this->print(e.what(), Color::RED);
+                outputHandler().print(e.what(), {Color::RED});
                 continue;
             }
             updateFlag = true;
@@ -201,9 +180,9 @@ void MenuManager::setDefaultTextColor(int color) {
  */
 void MenuManager::setSelection(Page page, int id) {
     if (id >= page.getSelectables().size()) {
-        std::string msg = concatenateString({ "Exception at trying to select navigator ", std::to_string(id), " in page navigator size: ", 
+        std::string msg = concatenateString({ "Exception at trying to select navigator ", std::to_string(id), " in page navigator size: ",
                                             std::to_string(page.getSelectables().size()), "\n" });
-        this->print(msg, Color::RED);
+        outputHandler().print(msg, {Color::RED});
         return;
     }
     this->_currentSelection = id;
@@ -223,7 +202,7 @@ void MenuManager::forceSetSelection(int id) {
  */
 void MenuManager::initQuit(MenuManager* m, Page& page) {
     std::string msg = (*m)._lang.get<std::string>("quitMessage");
-    m->print(msg, Color::GRAY);
+    m->outputHandler().print(msg, {Color::GRAY});
 }
 
 /**
