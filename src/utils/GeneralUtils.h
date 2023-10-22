@@ -7,6 +7,5 @@
 #include "Constant.h"
 
 int getTextColor(int, int = Color::BLACK);
-void clearScreen();
 
 std::string concatenateString(std::initializer_list<std::string>);

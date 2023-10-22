@@ -9,7 +9,7 @@ class SelectableAction;
 class MenuManager;
 class Page;
 
-typedef void (*ActionType)(MenuManager*, Page&);
+typedef void (*ActionType)(MenuManager*);
 
 class Selectable {
 private:
@@ -17,7 +17,7 @@ private:
     std::shared_ptr<SelectableAction> _actionPtr;
 public:
     std::string label();
-    SelectableAction getAction();
+    std::shared_ptr<SelectableAction> getAction();
     void setAction(ActionType, bool = false);
     Selectable(std::string, ActionType, bool = false);
     Selectable(std::string);

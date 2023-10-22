@@ -7,14 +7,25 @@ SET(CURSES_USE_NCURSES TRUE)
 find_package(Curses REQUIRED)
 
 set (_SimpleGUIInclude  "${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_LIST_DIR}/libs" 
-                        "${CMAKE_CURRENT_LIST_DIR}/utils" "${CMAKE_CURRENT_LIST_DIR}/output_handler"
-                        PARENT_SCOPE)
+                        "${CMAKE_CURRENT_LIST_DIR}/utils" "${CMAKE_CURRENT_LIST_DIR}/io_handler"
+                        )
 
 file (GLOB _MenuManagerSources "*.cpp")
 file (GLOB _LibsSources "libs/*.cpp" "libs/*.hpp")
 file (GLOB _UtilsSources "utils/*.cpp")
 file (GLOB _ConfigSources "config/*.json")
-file (GLOB _OutputSources "output_handler/*.cpp")
+file (GLOB _IOSources "io_handler/*.cpp")
 
-set(_SimpleGUISources ${_MenuManagerSources} ${_LibsSources} ${_UtilsSources} ${_OutputSources} PARENT_SCOPE)
+if(WIN32)
+    list(FILTER _IOSources EXCLUDE REGEX ".*UnixIO\\.cpp$")
+elseif(UNIX)
+    list(FILTER _IOSources EXCLUDE REGEX ".*WindowsIO\\.cpp$")
+endif()
+
+message("${_IOSources}")
+
+set(_SimpleGUISources ${_MenuManagerSources} ${_LibsSources} ${_UtilsSources} ${_IOSources})
 set(_ConfigSources ${_ConfigSources} PARENT_SCOPE)
+
+add_library(SimpleGUI ${_SimpleGUISources})
+target_include_directories(SimpleGUI PUBLIC ${_SimpleGUIInclude})

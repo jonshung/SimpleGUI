@@ -9,17 +9,17 @@ class VendingMachine : public MenuManager {
 private:
     UserOrder _orderHandler;
 public:
-    static Page initDefaultPage();
-    static Page initSnacksPage();
-    static Page initDrinksPage();
-    static Page initUserOrderPage();
+    static void populateDefaultPage(std::shared_ptr<Page>);
+    static void populateSnacksPage(std::shared_ptr<Page>);
+    static void populateDrinksPage(std::shared_ptr<Page>);
+    static void populateUserOrderPage(std::shared_ptr<Page>);
 
-    static void directDefaultPage(MenuManager* m, Page &page);
-    static void directSnacksPage(MenuManager* m, Page &page);
-    static void directDrinksPage(MenuManager* m, Page &page);
-    static void directUserOrderPage(MenuManager* m, Page &page);
-    static void doNothing(MenuManager*m, Page &page);
-    static void input(MenuManager* m, Page &page);
+    static void directDefaultPage(MenuManager* m);
+    static void directSnacksPage(MenuManager* m);
+    static void directDrinksPage(MenuManager* m);
+    static void directUserOrderPage(MenuManager* m);
+    static void doNothing(MenuManager*m);
+    static void input(MenuManager* m);
 
     VendingMachine();
     template<typename T>
@@ -29,6 +29,6 @@ public:
     void render(Page page);
 
     UserOrder& userOrderHandler() { return _orderHandler; }
-    static void requestAddSnackOrder(MenuManager* m, Page &page);
-    static void requestAddDrinkOrder(MenuManager* m, Page &page);
+    static void requestAddSnackOrder(MenuManager* m);
+    static void requestAddDrinkOrder(MenuManager* m);
 };

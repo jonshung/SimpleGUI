@@ -2,14 +2,6 @@
 #include <iostream>
 
 /**
- * @brief Clear the screen
- * 
- */
-void clearScreen() {
-    if (system("CLS")) system("clear");
-}
-
-/**
  * @brief Concatenate a group of strings
  * 
  * @param params 

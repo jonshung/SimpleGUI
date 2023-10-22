@@ -1,9 +1,9 @@
-#include "WindowsOutput.h"
+#include "WindowsIO.h"
 
 // initialize instance pointer
-WindowsOutput* WindowsOutput::_instance = nullptr;
+WindowsIO* WindowsIO::_instance = nullptr;
 
-WindowsOutput::WindowsOutput() {
+WindowsIO::WindowsIO() {
     _WindowsHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 }
 
@@ -14,7 +14,7 @@ WindowsOutput::WindowsOutput() {
  * @param backgroundColor 
  * @return int 
  */
-int WindowsOutput::getTextColor(int colorId, int backgroundColor) {
+int WindowsIO::getTextColor(int colorId, int backgroundColor) {
     return colorId + backgroundColor * 16;
 }
 
@@ -23,19 +23,19 @@ int WindowsOutput::getTextColor(int colorId, int backgroundColor) {
  *
  * @param colorId
  */
-void WindowsOutput::setColor(int bgColor, int colorId) {
+void WindowsIO::setColor(int bgColor, int colorId) {
     int colorOffset = getTextColor(colorId, bgColor);
     SetConsoleTextAttribute(_WindowsHandle, colorId);
 }
 
-WindowsOutput* WindowsOutput::instance() {
+WindowsIO* WindowsIO::instance() {
     if (_instance == nullptr) {
-        _instance = new WindowsOutput();
+        _instance = new WindowsIO();
     }
     return _instance;
 }
 
-void WindowsOutput::print(std::string msg, std::initializer_list<int> attr) {
+void WindowsIO::print(std::string msg, std::initializer_list<int> attr) {
     int bgColor = Color::BLACK;
     int color = Color::WHITE;
     int defaultBgColor = Color::BLACK;
@@ -58,4 +58,13 @@ void WindowsOutput::print(std::string msg, std::initializer_list<int> attr) {
     this->setColor(bgColor, color);
     std::cout << msg << std::endl;
     this->setColor(defaultBgColor, defaultColor);
+}
+
+unsigned char WindowsIO::getChar() {
+    unsigned char c = _getch();
+    return c;
+}
+
+void WindowsIO::clearScreen() {
+    if(system("CLS")) system("clear");
 }

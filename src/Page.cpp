@@ -12,13 +12,25 @@ std::vector<Selectable>& Page::getSelectables() {
     return _selectables;
 }
 
+Page::Page() {
+    _title = "";
+    _initialSelection = 0;
+    _selectables = std::vector<Selectable>();
+}
+
 Page::Page(std::string title) {
     _initialSelection = 0;
     _title = title;
+    _selectables = std::vector<Selectable>();
 }
 
 Page::Page(std::string title, std::vector<Selectable> selectables) {
     _initialSelection = 0;
+    _title = title;
+    _selectables = selectables;
+}
+
+void Page::reset(std::string title, std::vector<Selectable> selectables) {
     _title = title;
     _selectables = selectables;
 }

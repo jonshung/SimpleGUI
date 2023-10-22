@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 
-class OutputInterface {
+class IOInterface {
 private:
 public:
     /**
@@ -14,4 +14,6 @@ public:
      * 
      */
     virtual void print(std::string, std::initializer_list<int>) = 0;
+    virtual unsigned char getChar() = 0;
+    virtual void clearScreen() = 0;
 };

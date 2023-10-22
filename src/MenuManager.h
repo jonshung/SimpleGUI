@@ -4,17 +4,26 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <conio.h>
 #include <stdexcept>
+#include <memory>
+
+#if _WIN32
+#include "WindowsIO.h"
+#elif _LINUX
+#include "UnixIO.h"
+#endif
 
 #include "Config.h"
 #include "utils/GeneralUtils.h"
 #include "Page.h"
 #include "Selectable.h"
-#include "WindowsOutput.h"
+#include "WindowsIO.h"
 
 class Selectable;
+class MenuManager;
 class Page;
+
+typedef void (*ActionType)(MenuManager*);
 
 class MenuManager {
 private:
@@ -22,9 +31,14 @@ private:
     std::string _menuName;
     int _bgColor;
     int _defaultTextColor;
-    WindowsOutput* _OutputHandler;
+    IOInterface* _IOHandler;
     int _currentSelection;
+    
     bool _direct;
+    bool _updateFlag;
+    bool _quitFlag;
+    std::shared_ptr<Page> _currentPage;
+
 public:
     ConfigManager _lang;
     ConfigManager _style;
@@ -38,17 +52,23 @@ public:
     void forceSetSelection(int);
     bool direct();
     void setDirect(bool);
+    void setDirectTarget(std::shared_ptr<Page>);
     virtual MenuManager* linker(MenuManager*);
-    WindowsOutput outputHandler();
+    IOInterface* IOHandler();
 
     MenuManager();
 
-    void eventListener(Page);
-    virtual void loadPage(Page) final;
-    virtual void preloadPage(Page);
-    virtual void render(Page page);
-    virtual void postLoadPage(Page);
+    virtual void eventListener();
+    virtual void onArrow();
+    virtual void onEnter();
+    virtual void onKey();
+
+    virtual void loadPage() final;
+    virtual void preloadPage();
+    virtual void render();
+    virtual void postLoadPage();
     void setColor(int);
-    static void initQuit(MenuManager*, Page&);
-    static void doNothing(MenuManager*, Page&);
+
+    static void initQuit(MenuManager*);
+    static void doNothing(MenuManager*);
 };

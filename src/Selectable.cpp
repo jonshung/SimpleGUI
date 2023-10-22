@@ -4,8 +4,8 @@ std::string Selectable::label() {
     return _label;
 }
 
-SelectableAction Selectable::getAction() {
-    return *(_actionPtr.get());
+std::shared_ptr<SelectableAction> Selectable::getAction() {
+    return _actionPtr;
 }
 
 void Selectable::setAction(ActionType action, bool isQuit) {

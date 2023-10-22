@@ -9,14 +9,13 @@ class Page;
 class MenuManager;
 class SelectableAction;
 class Selectable;
-typedef void (*ActionType)(MenuManager*, Page&);
+typedef void (*ActionType)(MenuManager*);
 
 class Page {
 private:
     std::string _title = "";
     std::vector<Selectable> _selectables;
     int _initialSelection;
-    Page();
 
 public:
     std::string title();
@@ -29,6 +28,9 @@ public:
     void removeItem(int);
     static void setSelectablesActions(std::vector<Selectable>&, ActionType);
 
+    void reset(std::string title = "", std::vector<Selectable> = std::vector<Selectable>());
+
+    Page();
     Page(std::string);
     Page(std::string, std::vector<Selectable>);
 };
