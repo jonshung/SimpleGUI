@@ -32,7 +32,12 @@ void MenuManager::setDirectTarget(std::shared_ptr<Page> page) {
  */
 MenuManager::MenuManager() {
     _direct = false;
+    #if _WIN32
     _IOHandler = WindowsIO::instance();
+    #endif
+    #if __unix
+    _IOHandler = UnixIO::instance();
+    #endif
     _currentSelection = 0;
     this->_lang = ConfigManager("config/us.json");
     this->_style = ConfigManager("config/style.json");

@@ -3,12 +3,15 @@
 #if _WIN32
 #include <Windows.h>
 #include <conio.h>
-#else
-#error OS not supported
 #endif
 
 #include "IOInterface.h"
 #include "Constant.h"
+
+// Explicit reserved keyword definition, only applies to OS other than Win32
+#ifndef HANDLE
+#define HANDLE void*
+#endif
 
 class WindowsIO : public IOInterface {
 private:

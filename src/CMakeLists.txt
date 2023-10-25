@@ -11,7 +11,7 @@ set (_SimpleGUIInclude  "${CMAKE_CURRENT_SOURCE_DIR}/" "${CMAKE_CURRENT_SOURCE_D
                         )
 
 file (GLOB _MenuManagerSources "*.cpp")
-file (GLOB _LibsSources "libs/*.cpp")
+file (GLOB _LibsSources "libs/*.cpp" "libs/*.hpp")
 file (GLOB _UtilsSources "utils/*.cpp")
 file (GLOB _ConfigSources "config/*.json")
 file (GLOB _IOSources "io_handler/*.cpp")
@@ -27,3 +27,4 @@ set(_ConfigSources ${_ConfigSources} PARENT_SCOPE)
 
 add_library(SimpleGUI STATIC ${_SimpleGUISources})
 target_include_directories(SimpleGUI PUBLIC ${_SimpleGUIInclude} ${CURSES_INCLUDE_DIRS})
+target_link_libraries(SimpleGUI ${CURSES_LIBRARIES})

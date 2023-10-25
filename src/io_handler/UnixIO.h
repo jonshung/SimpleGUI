@@ -1,16 +1,13 @@
+#pragma once
 #include "IOInterface.h"
 
-#pragma once
-
-#ifndef _LINUX
-#error OS Identification failed
+#if __unix
+#include <ncurses.h>
 #endif
-
-#include <ncurses/ncurses.h>
 
 class UnixIO : public IOInterface {
 private:
-    static UnixIO* _instance;
+    inline static UnixIO* _instance = nullptr;
     UnixIO();
 public:
     static UnixIO* instance();

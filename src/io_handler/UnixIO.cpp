@@ -1,7 +1,5 @@
 #include "UnixIO.h"
 
-UnixIO* _instance = nullptr;
-
 UnixIO* UnixIO::instance() {
     if(_instance == nullptr) {
         _instance = new UnixIO();

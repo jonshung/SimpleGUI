@@ -7,11 +7,8 @@
 #include <stdexcept>
 #include <memory>
 
-#if _WIN32
 #include "WindowsIO.h"
-#elif _LINUX
 #include "UnixIO.h"
-#endif
 
 #include "Config.h"
 #include "utils/GeneralUtils.h"

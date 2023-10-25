@@ -27,7 +27,7 @@ add_executable (BuildingTarget ${_BuildSources})
 set_target_properties(BuildingTarget PROPERTIES OUTPUT_NAME ${_OutExecutable})
 
 target_include_directories(BuildingTarget PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/VendingMachine")
-target_link_libraries(BuildingTarget ${CURSES_LIBRARIES} SimpleGUI)
+target_link_libraries(BuildingTarget SimpleGUI)
 
 # Change this to your project config path to automatically load it to the build path
 set(_ConfigPath "${CMAKE_SOURCE_DIR}/src/config")
