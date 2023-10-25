@@ -52,6 +52,10 @@ IOInterface* MenuManager::IOHandler() {
     return _IOHandler;
 }
 
+MenuManager::~MenuManager() {
+    delete _IOHandler;
+}
+
 /**
  * @brief Page loading pipeline (Do not overload)
  *
@@ -80,10 +84,10 @@ void MenuManager::render() {
         this->forceSetSelection(page.initialSelection());
         this->setDirect(false);
     }
-    IOHandler()->print(page.title() + "\n", { this->_style.get<int>("titleColor") });
+    IOHandler()->print(page.title() + "\n", { this->_style.get<std::string>("titleColor") });
     for (int i = 0; i < selectables.size(); i++) {
-        if (this->currentSelection() == i) IOHandler()->print(selectables[i].label(), { this->_style.get<int>("selectingColor") });
-        else IOHandler()->print(selectables[i].label(), { this->defaultTextColor() });
+        if (this->currentSelection() == i) IOHandler()->print(selectables[i].label(), { this->_style.get<std::string>("selectingColor") });
+        else IOHandler()->print(selectables[i].label(), { /* standard color */ });
     }
 }
 
@@ -105,23 +109,21 @@ void MenuManager::eventListener() {
     Page& page = *(_currentPage);
     while (!_updateFlag) {
         unsigned char key = IOHandler()->getChar();
-        if (Keys::Arrow == key) {
-            this->onArrow();
+        if (isArrowKey(key)) {
+            this->onArrow(key);
         }
-        if (Keys::Enter == key) {
+        if (Keys::ENTER == key) {
             this->onEnter();
         }
     }
     if (!_quitFlag) loadPage();
 }
 
-void MenuManager::onArrow() {
+void MenuManager::onArrow(int c) {
     Page& page = *(_currentPage);
-
-    unsigned char arrow = IOHandler()->getChar();
     int selection = this->currentSelection();
-    switch (arrow) {
-    case Keys::Up: {
+    switch (c) {
+    case Keys::UP: {
         while (selection > 0) {
             --selection;
             Selectable dest;
@@ -140,7 +142,7 @@ void MenuManager::onArrow() {
         }
         break;
     }
-    case Keys::Down: {
+    case Keys::DOWN: {
         while (selection < page.getSelectables().size() - 1) {
             ++selection;
             Selectable dest;
@@ -182,7 +184,7 @@ void MenuManager::onEnter() {
             (action.getModule())(this);
         }
         catch (const std::exception& e) {
-            IOHandler()->print(e.what(), { Color::RED });
+            IOHandler()->print(e.what(), { "\033[38;5;9m" });
             _quitFlag = true;
         }
     }
@@ -208,7 +210,7 @@ void MenuManager::setSelection(Page page, int id) {
     if (id >= page.getSelectables().size()) {
         std::string msg = concatenateString({ "Exception at trying to select navigator ", std::to_string(id), " in page navigator size: ",
                                             std::to_string(page.getSelectables().size()), "\n" });
-        IOHandler()->print(msg, { Color::RED });
+        IOHandler()->print(msg, { "\033[38;5;9m" });
         return;
     }
     this->_currentSelection = id;
@@ -228,7 +230,7 @@ void MenuManager::forceSetSelection(int id) {
  */
 void MenuManager::initQuit(MenuManager* m) {
     std::string msg = (*m)._lang.get<std::string>("quitMessage");
-    m->IOHandler()->print(msg, { Color::GRAY });
+    m->IOHandler()->print(msg, { "8" });
 }
 
 /**

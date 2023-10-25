@@ -20,13 +20,12 @@ enum Color {
     PALE_YELLOW = 14,
     WHITE = 15
 };
+
 enum Keys : int {
-    Arrow = 224,
-    Up = 72,
-    Down = 80,
-    Left = 75,
-    Right = 77,
-    EscapeKey = 27,
-    Enter = 13,
-    Del = 83
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    ENTER,
+    ESC,
 };

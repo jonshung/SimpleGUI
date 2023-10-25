@@ -1,6 +1,6 @@
 {
     "defaultTextColor": 15,
     "defaultBackgroundColor": 0,
-    "titleColor": 3,
-    "selectingColor": 14
+    "titleColor": "10",
+    "selectingColor": "226"
 }

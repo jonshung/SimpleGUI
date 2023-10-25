@@ -13,6 +13,20 @@
 #define HANDLE void*
 #endif
 
+namespace WindowsKeys {
+    enum {
+        Numpad = 0,
+        Arrow = 224,
+        Up = 72,
+        Down = 80,
+        Left = 75,
+        Right = 77,
+        EscapeKey = 27,
+        Enter = 13,
+        Del = 83
+    };
+};
+
 class WindowsIO : public IOInterface {
 private:
     HANDLE _WindowsHandle;
@@ -22,7 +36,8 @@ public:
     static WindowsIO* instance();
     int getTextColor(int colorId, int backgroundColor);
     void setColor(int, int);
-    void print(std::string, std::initializer_list<int>) override;
-    unsigned char getChar() override;
+    void print(std::string, std::initializer_list<std::string> = {}) override;
+    int getChar() override;
+    int keyTranslate(int);
     void clearScreen() override;
 };

@@ -9,3 +9,4 @@
 int getTextColor(int, int = Color::BLACK);
 
 std::string concatenateString(std::initializer_list<std::string>);
+bool isArrowKey(int c);

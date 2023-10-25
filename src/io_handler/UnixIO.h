@@ -2,17 +2,33 @@
 #include "IOInterface.h"
 
 #if __unix
-#include <ncurses.h>
+#include <termios.h>
 #endif
+
+namespace UnixKeys {
+    enum {
+        Up = 65,
+        Down = 66,
+        Right = 67,
+        Left = 68,
+        EscapeKey = 27,
+        Enter = 10,
+        Del = 14
+    };
+};
 
 class UnixIO : public IOInterface {
 private:
     inline static UnixIO* _instance = nullptr;
+    termios _term;
     UnixIO();
 public:
     static UnixIO* instance();
-    void print(std::string, std::initializer_list<int> attr);
-    unsigned char getChar() override;
+    void print(std::string, std::initializer_list<std::string> = {});
+    void noEcho();
+    void echo();
+    int getChar() override;
+    int keyTranslate(int);
     void clearScreen() override;
 
     ~UnixIO();

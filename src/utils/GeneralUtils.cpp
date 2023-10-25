@@ -12,3 +12,7 @@ std::string concatenateString(std::initializer_list<std::string> params) {
     for(auto i : params) result << i;
     return result.str();
 }
+
+bool isArrowKey(int c) {
+    return (c == Keys::UP || c == Keys::DOWN || c == Keys::LEFT || c == Keys::RIGHT);
+}

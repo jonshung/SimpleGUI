@@ -54,9 +54,10 @@ public:
     IOInterface* IOHandler();
 
     MenuManager();
+    ~MenuManager();
 
     virtual void eventListener();
-    virtual void onArrow();
+    virtual void onArrow(int);
     virtual void onEnter();
     virtual void onKey();
 
