@@ -184,7 +184,7 @@ void MenuManager::onEnter() {
             (action.getModule())(this);
         }
         catch (const std::exception& e) {
-            IOHandler()->print(e.what(), { "\033[38;5;9m" });
+            IOHandler()->print(e.what(), { "9" });
             _quitFlag = true;
         }
     }
@@ -210,7 +210,7 @@ void MenuManager::setSelection(Page page, int id) {
     if (id >= page.getSelectables().size()) {
         std::string msg = concatenateString({ "Exception at trying to select navigator ", std::to_string(id), " in page navigator size: ",
                                             std::to_string(page.getSelectables().size()), "\n" });
-        IOHandler()->print(msg, { "\033[38;5;9m" });
+        IOHandler()->print(msg, { "9" });
         return;
     }
     this->_currentSelection = id;

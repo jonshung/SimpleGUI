@@ -143,7 +143,7 @@ void VendingMachine::directUserOrderPage(MenuManager* m) {
 void VendingMachine::requestAddSnackOrder(MenuManager* m) {
     VendingMachine* menuHandler = VendingMachine::linker<VendingMachine>(m);
     (menuHandler->userOrderHandler()).addOrder(menuHandler->currentSelection());
-    menuHandler->IOHandler()->print("\nAdded order successfully! Press any character to continue...", { "\033[38;5;10m" });
+    menuHandler->IOHandler()->print("\nAdded order successfully! Press any character to continue...", { "10" });
     m->IOHandler()->getChar();
 }
 
@@ -155,7 +155,7 @@ void VendingMachine::requestAddSnackOrder(MenuManager* m) {
 void VendingMachine::requestAddDrinkOrder(MenuManager* m) {
     VendingMachine* menuHandler = VendingMachine::linker<VendingMachine>(m);
     (menuHandler->userOrderHandler()).addOrder(4 + menuHandler->currentSelection());                // Hard coded for example
-    menuHandler->IOHandler()->print("\nAdded order successfully! Press any character to continue...", { "\033[38;5;10m" });
+    menuHandler->IOHandler()->print("\nAdded order successfully! Press any character to continue...", { "10" });
     m->IOHandler()->getChar();
 }
 
