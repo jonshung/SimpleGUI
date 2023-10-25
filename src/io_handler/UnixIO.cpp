@@ -11,6 +11,7 @@ UnixIO::~UnixIO() {
     delete this->_instance;
 }
 
+#if __unix
 void UnixIO::noEcho() {
     _term.c_lflag &= ~ECHO;
     _term.c_lflag &= ~ICANON;
@@ -22,6 +23,7 @@ void UnixIO::echo() {
     _term.c_lflag |= ICANON;
     tcsetattr(0, TCSANOW, &_term);
 }
+#endif
 
 UnixIO::UnixIO() {
     tcgetattr(0, &_term);

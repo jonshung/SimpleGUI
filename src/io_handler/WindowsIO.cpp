@@ -5,6 +5,7 @@ WindowsIO* WindowsIO::_instance = nullptr;
 
 WindowsIO::WindowsIO() {
     _WindowsHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleMode(_WindowsHandle, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 
 /**
@@ -36,28 +37,29 @@ WindowsIO* WindowsIO::instance() {
 }
 
 void WindowsIO::print(std::string msg, std::initializer_list<std::string> attr) {
-    std::string bgColor = "\e[38;5;15m";
-    std::string color = "\e[48;5;0m";
-    std::string defaultBgColor = "\e[38;5;15m";
-    std::string defaultColor = "\e[48;5;0m";
+    std::string bgColor = "\033[48;5;0m";
+    std::string color = "\033[38;5;15m";
+    std::string defaultBgColor = "\033[48;5;0m";
+    std::string defaultColor = "\033[38;5;15m";
 
     if (attr.size() > 0) {
         color = *(attr.begin());
+        color = "\033[38;5;" + color + "m";
         if (attr.size() > 1) {
             std::string vl = *(attr.begin() + 1);
-            bgColor = (vl == "") ? bgColor : vl;
+            bgColor = (vl == "") ? bgColor : ("\033[48;5;" + vl + "m");
         }
         if (attr.size() > 2) {
             std::string vl = *(attr.begin() + 1);
-            defaultColor = (vl == "") ? defaultColor : vl;
+            defaultColor = (vl == "") ? defaultColor : ("\033[38;5;" + vl + "m");
         }
         if (attr.size() > 3) {
             std::string vl = *(attr.begin() + 1);
-            defaultBgColor = (vl == "") ? defaultBgColor : vl;
+            defaultBgColor = (vl == "") ? defaultBgColor : ("\033[48;5;" + vl + "m");
         }
     }
 
-    std::cout << color << bgColor << msg << std::endl;
+    std::cout << color << bgColor << msg << "\033[0m" << std::endl;
 }
 
 int WindowsIO::getChar() {

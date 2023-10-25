@@ -1,12 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 set (CMAKE_CXX_STANDARD 17)
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    # require at least gcc 4.8
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8)
-        message(FATAL_ERROR "GCC version must be at least 4.8!")
-    endif()
-endif()
+
 
 # Set this to your project name
 set(_BuildProject "VendingMachine")
@@ -14,6 +9,19 @@ set(_BuildProject "VendingMachine")
 set(_OutExecutable ${_BuildProject})
 
 project(_BuildProject VERSION 0.1.0 LANGUAGES CXX)
+
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    # require at least gcc 4.8
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8)
+        message(FATAL_ERROR "GCC version must be at least 4.8!")
+    endif()
+endif()
+
+if(WIN32)
+    if(CMAKE_SYSTEM_VERSION VERSION_LESS 10)
+        message(FATAL_ERROR "Windows version must be atleast 10")
+    endif()
+endif()
 
 SET(CURSES_USE_NCURSES TRUE)
 find_package(Curses REQUIRED)

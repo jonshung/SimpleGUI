@@ -20,7 +20,9 @@ namespace UnixKeys {
 class UnixIO : public IOInterface {
 private:
     inline static UnixIO* _instance = nullptr;
+    #if __unix
     termios _term;
+    #endif
     UnixIO();
 public:
     static UnixIO* instance();
