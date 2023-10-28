@@ -5,13 +5,14 @@
 #include <sstream>
 #include <iterator>
 #include <exception>
+#include <string.h>
 
 class ConfigManager {
-private:
+protected:
     std::string _fileName;
     json _rawData;
 public:
-    void loadRaw(std::string);
+    void loadFromFile(std::string);
     template<typename T>
     T get(std::string, json = json::value_t::null);
     ConfigManager();

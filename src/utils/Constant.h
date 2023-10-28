@@ -1,7 +1,7 @@
 #pragma once
 #define _CONSTANT_ENUM_
 
-//most used colors
+//most used colors DEPRECATED AND NO LONGER CORRECT
 enum Color {
     BLACK = 0,
     NAVY = 1,

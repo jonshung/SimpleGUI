@@ -1,5 +1,12 @@
 #include "FileHandler.h"
 
+/**
+ * @brief Parse a file into nlohmann::json object
+ * 
+ * @param filename 
+ * @param _RETURN_CODE 
+ * @return 
+*/
 json parseJsonFromFile(std::string filename, int &_RETURN_CODE) {
     std::fstream fileHandler(filename);
     json data;
@@ -17,3 +24,7 @@ json parseJsonFromFile(std::string filename, int &_RETURN_CODE) {
     _RETURN_CODE = FileHandlingFlag::SUCESS;
     return data;
 }
+
+/**
+* @todo: Add file serialization and file output
+*/

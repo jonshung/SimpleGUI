@@ -1,5 +1,6 @@
 #include "WindowsIO.h"
 
+#if _WIN32
 // initialize instance pointer
 WindowsIO* WindowsIO::_instance = nullptr;
 
@@ -97,3 +98,4 @@ int WindowsIO::keyTranslate(int c) {
 void WindowsIO::clearScreen() {
     if(system("CLS")) system("clear");
 }
+#endif

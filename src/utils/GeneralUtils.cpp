@@ -13,6 +13,11 @@ std::string concatenateString(std::initializer_list<std::string> params) {
     return result.str();
 }
 
+/**
+ * @brief Check if the translated, entered key is an arrow key or not
+ * @param c 
+ * @return 
+*/
 bool isArrowKey(int c) {
     return (c == Keys::UP || c == Keys::DOWN || c == Keys::LEFT || c == Keys::RIGHT);
 }

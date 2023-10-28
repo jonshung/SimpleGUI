@@ -6,7 +6,7 @@ SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET(CURSES_USE_NCURSES TRUE)
 find_package(Curses REQUIRED)
 
-set (_SimpleGUIInclude  "${CMAKE_CURRENT_SOURCE_DIR}/" "${CMAKE_CURRENT_SOURCE_DIR}/libs" 
+set (_SimpleGUIInclude  "${CMAKE_CURRENT_SOURCE_DIR}/" "${CMAKE_CURRENT_SOURCE_DIR}/libs"
                         "${CMAKE_CURRENT_SOURCE_DIR}/utils" "${CMAKE_CURRENT_SOURCE_DIR}/io_handler"
                         )
 
@@ -17,9 +17,9 @@ file (GLOB _ConfigSources "config/*.json")
 file (GLOB _IOSources "io_handler/*.cpp")
 
 if(WIN32)
-    list(FILTER _IOSources EXCLUDE REGEX ".*UnixIO\\.cpp$")
+    list(FILTER _IOSources EXCLUDE REGEX ."*UnixIO\\.cpp$")
 elseif(UNIX)
-    list(FILTER _IOSources EXCLUDE REGEX ".*WindowsIO\\.cpp$")
+    list(FILTER _IOSources EXCLUDE REGEX ."*WindowsIO\\.cpp$")
 endif()
 
 set(_SimpleGUISources ${_MenuManagerSources} ${_LibsSources} ${_UtilsSources} ${_IOSources})

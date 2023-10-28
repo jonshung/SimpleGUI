@@ -1,35 +1,62 @@
 #include "Page.h"
 
+/**
+ * @brief Return the current page title
+ * @return 
+*/
 std::string Page::title() {
     return _title;
 }
 
+/**
+ * @brief return the initial selection when this page is redirected to
+ * @return 
+*/
 int Page::initialSelection() {
     return _initialSelection;
 }
 
+/**
+ * @brief Get all Selectable components in this page
+ * @return 
+*/
 std::vector<Selectable>& Page::getSelectables() {
     return _selectables;
 }
 
+/**
+ * @brief Empty initialization of a Page componenet
+*/
 Page::Page() {
     _title = "";
     _initialSelection = 0;
     _selectables = std::vector<Selectable>();
 }
 
+/**
+ * @param title 
+*/
 Page::Page(std::string title) {
     _initialSelection = 0;
     _title = title;
     _selectables = std::vector<Selectable>();
 }
 
+/**
+ * @param title 
+ * @param selectables 
+*/
 Page::Page(std::string title, std::vector<Selectable> selectables) {
     _initialSelection = 0;
     _title = title;
     _selectables = selectables;
 }
 
+/**
+ * @brief Reset the Page to the appropriate attributes
+ * @param title 
+ * @param selectables 
+*/
 void Page::reset(std::string title, std::vector<Selectable> selectables) {
     _title = title;
     _selectables = selectables;

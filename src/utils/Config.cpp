@@ -1,15 +1,26 @@
 #include "Config.h"
 
+/**
+ * @brief Initialize an empty config interface
+*/
 ConfigManager::ConfigManager() {
     this->_rawData = json();
     this->_fileName = "";
 }
 
+/**
+ * @brief Initialize a config interface
+ * @param fileName 
+*/
 ConfigManager::ConfigManager(std::string fileName) {
-    this->loadRaw(fileName);
+    this->loadFromFile(fileName);
 }
 
-void ConfigManager::loadRaw(std::string fileName) {
+/**
+ * @brief Load a config file from path relative to executable's path
+ * @param fileName
+*/
+void ConfigManager::loadFromFile(std::string fileName) {
     int returnCode;
     json buffer = parseJsonFromFile(fileName, returnCode);
     if (returnCode != FileHandlingFlag::SUCESS) {
@@ -20,6 +31,12 @@ void ConfigManager::loadRaw(std::string fileName) {
     this->_fileName = fileName;
 }
 
+/**
+ * @brief Get the raw nlohmann::json object value if it exists, else throw an error for undefined key
+ * @param key 
+ * @param obj 
+ * @return 
+*/
 json ConfigManager::getRaw(std::string key, json obj) {
     if (obj.is_null()) obj = _rawData;
     json jsonValue;
@@ -33,6 +50,13 @@ json ConfigManager::getRaw(std::string key, json obj) {
     return jsonValue;
 }
 
+/**
+ * @brief return the type-casted value from the config interface
+ * @tparam T 
+ * @param key 
+ * @param obj 
+ * @return 
+*/
 template<typename T>
 T ConfigManager::get(std::string key, json obj) {
     if (obj.is_null()) obj = _rawData;
@@ -47,6 +71,9 @@ T ConfigManager::get(std::string key, json obj) {
     return returnType;
 }
 
+/**
+ * @brief Pre-defined template for ConfigManager::get<T>
+*/
 template int ConfigManager::get<int>(std::string key, json obj);
 template bool ConfigManager::get<bool>(std::string key, json obj);
 template std::string ConfigManager::get<std::string>(std::string key, json obj);

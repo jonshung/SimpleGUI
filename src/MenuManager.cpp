@@ -1,25 +1,49 @@
 #include "MenuManager.h"
 
+/**
+ * @brief Get default text color of the interface
+ * @return 
+*/
 int MenuManager::defaultTextColor() {
     return _defaultTextColor;
 }
 
+/**
+ * @brief Get application-wide background color
+ * @return 
+*/
 int MenuManager::bgColor() {
     return _bgColor;
 }
 
+/**
+ * @brief Return client's current selection in the current Page component
+ * @return 
+*/
 int MenuManager::currentSelection() {
     return _currentSelection;
 }
 
+/**
+ * @brief If next page render should be a redirection to another Page component
+ * @return 
+*/
 bool MenuManager::direct() {
     return _direct;
 }
 
+/**
+ * @brief Set Redirect flag
+ * @param vl 
+*/
 void MenuManager::setDirect(bool vl) {
     _direct = vl;
 }
 
+/**
+ * @brief Set the redirecting Page componenet, should be used with setDirect()
+ * @param page 
+*/
 void MenuManager::setDirectTarget(std::shared_ptr<Page> page) {
     this->_currentPage.reset();
     this->_currentPage = page;
@@ -48,6 +72,10 @@ MenuManager::MenuManager() {
     _defaultTextColor = (_defaultTextColor == -1) ? Color::WHITE : _defaultTextColor;
 }
 
+/**
+ * @brief Return the In/Out handler of this Menu instance
+ * @return 
+*/
 IOInterface* MenuManager::IOHandler() {
     return _IOHandler;
 }
@@ -58,7 +86,8 @@ MenuManager::~MenuManager() {
 
 /**
  * @brief Page loading pipeline (Do not overload)
- *
+ * Overridable
+ * 
  * @param page
  */
 void MenuManager::loadPage() {
@@ -68,12 +97,17 @@ void MenuManager::loadPage() {
     this->postLoadPage();
 }
 
+/**
+ * @brief Preloading opertion on a page ( should call clear screen for a clean transition )
+ * Overridable
+*/
 void MenuManager::preloadPage() {
     if (!_debug) IOHandler()->clearScreen();
 }
 
 /**
  * @brief Standard procedure to render a page, throw an exception if the number of displaying items is not equal to the number of selectables
+ * Overridable
  *
  * @param page
  */
@@ -92,7 +126,8 @@ void MenuManager::render() {
 }
 
 /**
- * @brief Handle event listening constructor
+ * @brief Initialize event listening, will be deprecated in the near future following the implementation of Multi threaded event handler
+ * Overridable
  *
  * @param page
  */
@@ -102,7 +137,8 @@ void MenuManager::postLoadPage() {
 
 /**
  * @brief Handle user inputs in the interface.
- *
+ * Overridable
+ * 
  * @param page
  */
 void MenuManager::eventListener() {
@@ -119,6 +155,12 @@ void MenuManager::eventListener() {
     if (!_quitFlag) loadPage();
 }
 
+/**
+ * @brief On arrow action, typically changing the selection of the user.
+ * Overridable
+ * 
+ * @param c 
+*/
 void MenuManager::onArrow(int c) {
     Page& page = *(_currentPage);
     int selection = this->currentSelection();
@@ -165,10 +207,16 @@ void MenuManager::onArrow(int c) {
     }
 }
 
+/**
+ * @brief Experimental feature
+*/
 void MenuManager::onKey() {
     //todo
 }
 
+/**
+ * @brief Handle user enter key
+*/
 void MenuManager::onEnter() {
     Page& page = *(_currentPage);
 

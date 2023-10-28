@@ -10,12 +10,23 @@ public:
     /**
      * @brief Base function for outputing to the desired console window of current output interface
      * 
-     * @param std::string msg
-     * @param std::initializer_list<int> attributes
+     * @param message
+     * @param attributes
      * 
      */
     virtual void print(std::string, std::initializer_list<std::string> = {}) = 0;
+
+    /**
+     * @brief Base function for translating input key of different OS to a unified definition
+     * @param
+     * @return 
+    */
     virtual int keyTranslate(int) = 0;
+
+    /**
+     * @brief Get a character input from keyboard without echoing to the console terminal
+     * @return 
+    */
     virtual int getChar() = 0;
     virtual void clearScreen() = 0;
 };
