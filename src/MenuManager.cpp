@@ -285,6 +285,7 @@ void MenuManager::forceSetSelection(int id) {
  * @brief Default quitting action
  */
 void MenuManager::initQuit(MenuManager* m) {
+    m->IOHandler()->clearScreen();
     std::string msg = (*m).getLang().get("quitMessage");
     m->IOHandler()->print(msg, { "8" });
 }

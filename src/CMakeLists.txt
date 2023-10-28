@@ -2,10 +2,6 @@ cmake_minimum_required(VERSION 3.0.0)
 set (CMAKE_CXX_STANDARD 17)
 project(SimpleGUI VERSION 0.1.0 LANGUAGES CXX)
 
-SET(CMAKE_INCLUDE_CURRENT_DIR ON)
-SET(CURSES_USE_NCURSES TRUE)
-find_package(Curses REQUIRED)
-
 set (_SimpleGUIInclude  "${CMAKE_CURRENT_SOURCE_DIR}/" "${CMAKE_CURRENT_SOURCE_DIR}/libs"
                         "${CMAKE_CURRENT_SOURCE_DIR}/utils" "${CMAKE_CURRENT_SOURCE_DIR}/io_handler"
                         )
@@ -27,8 +23,7 @@ set(_ConfigSources ${_ConfigSources} PARENT_SCOPE)
 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/out")
 add_library(SimpleGUI STATIC ${_SimpleGUISources})
-target_include_directories(SimpleGUI PUBLIC ${_SimpleGUIInclude} ${CURSES_INCLUDE_DIRS})
-target_link_libraries(SimpleGUI ${CURSES_LIBRARIES})
+target_include_directories(SimpleGUI PUBLIC ${_SimpleGUIInclude})
 
 message("Copying base config files")
 set(_ConfigPath "${CMAKE_CURRENT_SOURCE_DIR}/config")

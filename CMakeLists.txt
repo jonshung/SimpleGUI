@@ -21,10 +21,7 @@ if(WIN32)
     endif()
 endif()
 
-SET(CURSES_USE_NCURSES TRUE)
-find_package(Curses REQUIRED)
 add_subdirectory(src)
-
 set(_ProjectBuildPaths "${_BuildProject}/*.cpp")
 file (GLOB _BuildSources ${_ProjectBuildPaths})
 
