@@ -9,3 +9,5 @@ src/cmake_install.cmake
 cmake_install.cmake
 CMakeCache.txt
 Makefile
+/docs
+/Doxyfile
