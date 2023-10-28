@@ -9,11 +9,12 @@ class VendingMachine : public MenuManager {
 private:
     UserOrder _orderHandler;
 public:
-    static void populateDefaultPage(std::shared_ptr<Page>);
-    static void populateSnacksPage(std::shared_ptr<Page>);
-    static void populateDrinksPage(std::shared_ptr<Page>);
-    static void populateUserOrderPage(std::shared_ptr<Page>);
+    void populateDefaultPage(std::shared_ptr<Page>);
+    void populateSnacksPage(std::shared_ptr<Page>);
+    void populateDrinksPage(std::shared_ptr<Page>);
+    void populateUserOrderPage(std::shared_ptr<Page>);
 
+    // ActionType components
     static void directDefaultPage(MenuManager* m);
     static void directSnacksPage(MenuManager* m);
     static void directDrinksPage(MenuManager* m);
@@ -22,8 +23,7 @@ public:
     static void input(MenuManager* m);
 
     VendingMachine();
-    template<typename T>
-    static T* linker(MenuManager *);
+    static VendingMachine* linker(MenuManager *);
 
     //example render overload
     void render(Page page);

@@ -17,14 +17,21 @@ file (GLOB _ConfigSources "config/*.json")
 file (GLOB _IOSources "io_handler/*.cpp")
 
 if(WIN32)
-    list(FILTER _IOSources EXCLUDE REGEX ."*UnixIO\\.cpp$")
+    list(FILTER _IOSources EXCLUDE REGEX ".*UnixIO\\.cpp$")
 elseif(UNIX)
-    list(FILTER _IOSources EXCLUDE REGEX ."*WindowsIO\\.cpp$")
+    list(FILTER _IOSources EXCLUDE REGEX ".*WindowsIO\\.cpp$")
 endif()
 
 set(_SimpleGUISources ${_MenuManagerSources} ${_LibsSources} ${_UtilsSources} ${_IOSources})
 set(_ConfigSources ${_ConfigSources} PARENT_SCOPE)
 
+set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/out")
 add_library(SimpleGUI STATIC ${_SimpleGUISources})
 target_include_directories(SimpleGUI PUBLIC ${_SimpleGUIInclude} ${CURSES_INCLUDE_DIRS})
 target_link_libraries(SimpleGUI ${CURSES_LIBRARIES})
+
+message("Copying base config files")
+set(_ConfigPath "${CMAKE_CURRENT_SOURCE_DIR}/config")
+add_custom_command(TARGET SimpleGUI POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${_ConfigPath} $<TARGET_FILE_DIR:SimpleGUI>/config)

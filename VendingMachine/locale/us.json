@@ -1,0 +1,8 @@
+{
+    "quitMessage": "Quiting program...",
+    "homeTitle": "Home",
+    "snacksPageTitle": "Snacks",
+    "drinksPageTitle": "Drinks",
+    "userOrderPageTitle": "Your Order",
+    "actionAddOrderSuccess": "\nAdded order successfully! Press any character to continue..."
+}

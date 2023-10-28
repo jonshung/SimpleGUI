@@ -6,6 +6,8 @@
 #include <iterator>
 #include <exception>
 #include <string.h>
+#include <algorithm>
+#include <iterator>
 
 class ConfigManager {
 protected:

@@ -5,17 +5,15 @@
 #include <map>
 #include <utility>
 
-class LocalizeConfig : ConfigManager {
+class LocalizeConfig : public ConfigManager {
 private:
 	std::map<std::string, std::string> _locale;
+	inline static std::string _baseLocale[] = {
+	"quitMessage"
+	};
 public:
-	const static std::string const _baseLocale[];
 	LocalizeConfig(std::string);
+	LocalizeConfig();
 	void initialize();
 	std::string get(std::string);
-};
-
-// that's a pretty long name
-const std::string const LocalizeConfig::_baseLocale[] = {
-	"quitMessage"
 };

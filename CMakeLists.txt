@@ -36,7 +36,7 @@ target_include_directories(BuildingTarget PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/Ve
 target_link_libraries(BuildingTarget SimpleGUI)
 
 # Change this to your project config path to automatically load it to the build path
-set(_ConfigPath "${CMAKE_SOURCE_DIR}/src/config")
+set(_ConfigPath "${CMAKE_SOURCE_DIR}/${_BuildProject}/locale")
 add_custom_command(TARGET BuildingTarget POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
-                    ${_ConfigPath} $<TARGET_FILE_DIR:BuildingTarget>/config)
+                       ${_ConfigPath} $<TARGET_FILE_DIR:BuildingTarget>/locale)

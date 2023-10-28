@@ -63,7 +63,7 @@ MenuManager::MenuManager() {
     _IOHandler = UnixIO::instance();
     #endif
     _currentSelection = 0;
-    this->_lang = ConfigManager("config/us.json");
+    this->_lang = LocalizeConfig("config/us.json");
     this->_style = ConfigManager("config/style.json");
 
     _bgColor = _style.get<int>("defaultBackgroundColor");
@@ -78,6 +78,14 @@ MenuManager::MenuManager() {
 */
 IOInterface* MenuManager::IOHandler() {
     return _IOHandler;
+}
+
+LocalizeConfig MenuManager::getLang() {
+    return _lang;
+}
+
+ConfigManager MenuManager::getStyle() {
+    return _style;
 }
 
 MenuManager::~MenuManager() {
@@ -118,9 +126,9 @@ void MenuManager::render() {
         this->forceSetSelection(page.initialSelection());
         this->setDirect(false);
     }
-    IOHandler()->print(page.title() + "\n", { this->_style.get<std::string>("titleColor") });
+    IOHandler()->print(page.title() + "\n", { this->getStyle().get<std::string>("titleColor")});
     for (int i = 0; i < selectables.size(); i++) {
-        if (this->currentSelection() == i) IOHandler()->print(selectables[i].label(), { this->_style.get<std::string>("selectingColor") });
+        if (this->currentSelection() == i) IOHandler()->print(selectables[i].label(), { this->getStyle().get<std::string>("selectingColor")});
         else IOHandler()->print(selectables[i].label(), { /* standard color */ });
     }
 }
@@ -277,7 +285,7 @@ void MenuManager::forceSetSelection(int id) {
  * @brief Default quitting action
  */
 void MenuManager::initQuit(MenuManager* m) {
-    std::string msg = (*m)._lang.get<std::string>("quitMessage");
+    std::string msg = (*m).getLang().get("quitMessage");
     m->IOHandler()->print(msg, { "8" });
 }
 

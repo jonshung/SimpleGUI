@@ -10,7 +10,7 @@
 #include "WindowsIO.h"
 #include "UnixIO.h"
 
-#include "Config.h"
+#include "LocalizeConfig.h"
 #include "utils/GeneralUtils.h"
 #include "Page.h"
 #include "Selectable.h"
@@ -35,10 +35,10 @@ private:
     bool _updateFlag;
     bool _quitFlag;
     std::shared_ptr<Page> _currentPage;
-
-public:
-    ConfigManager _lang;
+protected:
+    LocalizeConfig _lang;
     ConfigManager _style;
+public:
     
     virtual std::string getMenuName();
     int bgColor();
@@ -50,8 +50,10 @@ public:
     bool direct();
     void setDirect(bool);
     void setDirectTarget(std::shared_ptr<Page>);
-    virtual MenuManager* linker(MenuManager*);
+    static MenuManager* linker(MenuManager*);
     IOInterface* IOHandler();
+    LocalizeConfig getLang();
+    ConfigManager getStyle();
 
     MenuManager();
     ~MenuManager();

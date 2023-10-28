@@ -5,12 +5,12 @@
  * 
  */
 VendingMachine::VendingMachine() {
-    //this->_lang = ConfigManager("VendingMachine/us.json");
-    //this->_style = ConfigManager("style.json");
     std::shared_ptr<Page> pPtr(std::make_shared<Page>());
+    _lang = LocalizeConfig("locale/us.json");
     VendingMachine::populateDefaultPage(pPtr);
     this->setDirectTarget(pPtr);
     this->loadPage();
+
 
     this->_orderHandler = UserOrder();
 }
@@ -30,7 +30,7 @@ void VendingMachine::populateDefaultPage(std::shared_ptr<Page> pPtr) {
     selectables.push_back(Selectable("2. Drinks", &VendingMachine::directDrinksPage));
     selectables.push_back(Selectable("3. Your orders", &VendingMachine::directUserOrderPage));
     selectables.push_back(Selectable("4. Quit", &VendingMachine::initQuit, true));
-    obj.reset("Home", selectables);
+    obj.reset(getLang().get("homeTitle"), selectables);
 }
 
 /**
@@ -40,8 +40,12 @@ void VendingMachine::populateDefaultPage(std::shared_ptr<Page> pPtr) {
  * @param page 
  */
 void VendingMachine::directDefaultPage(MenuManager* m) {
+    VendingMachine* menuHandler = VendingMachine::linker(m);
+    if (menuHandler == NULL) {
+        throw std::runtime_error(concatenateString({ "Invalid casting from ", typeid(m).name(), " to ", typeid(m).name() }));
+    }
     std::shared_ptr<Page> dest = std::make_shared<Page>();
-    VendingMachine::populateDefaultPage(dest);
+    menuHandler->populateDefaultPage(dest);
     m->setDirectTarget(dest);
 }
 
@@ -59,7 +63,7 @@ void VendingMachine::populateSnacksPage(std::shared_ptr<Page> pPtr) {
     Page::setSelectablesActions(selectables, &VendingMachine::requestAddSnackOrder);
     selectables.push_back(Selectable("5. Back", &VendingMachine::directDefaultPage));
 
-    obj.reset("Snacks", selectables);
+    obj.reset(getLang().get("snacksPageTitle"), selectables);
 }
 
 /**
@@ -68,8 +72,12 @@ void VendingMachine::populateSnacksPage(std::shared_ptr<Page> pPtr) {
  * @param m 
  */
 void VendingMachine::directSnacksPage(MenuManager* m) {
+    VendingMachine* menuHandler = VendingMachine::linker(m);
+    if (menuHandler == NULL) {
+        throw std::runtime_error(concatenateString({ "Invalid casting from ", typeid(m).name(), " to ", typeid(m).name() }));
+    }
     std::shared_ptr<Page> dest = std::make_shared<Page>();
-    VendingMachine::populateSnacksPage(dest);
+    menuHandler->populateSnacksPage(dest);
     m->setDirectTarget(dest);
 }
 
@@ -87,7 +95,7 @@ void VendingMachine::populateDrinksPage(std::shared_ptr<Page> pPtr) {
     Page::setSelectablesActions(selectables, &VendingMachine::requestAddDrinkOrder);
     selectables.push_back(Selectable("4. Back", &VendingMachine::directDefaultPage));
 
-    obj.reset("Drinks", selectables);
+    obj.reset(getLang().get("drinksPageTitle"), selectables);
 }
 
 /**
@@ -96,8 +104,12 @@ void VendingMachine::populateDrinksPage(std::shared_ptr<Page> pPtr) {
  * @param m 
  */
 void VendingMachine::directDrinksPage(MenuManager* m) {
+    VendingMachine* menuHandler = VendingMachine::linker(m);
+    if (menuHandler == NULL) {
+        throw std::runtime_error(concatenateString({ "Invalid casting from ", typeid(m).name(), " to ", typeid(m).name() }));
+    }
     std::shared_ptr<Page> dest = std::make_shared<Page>();
-    VendingMachine::populateDrinksPage(dest);
+    menuHandler->populateDrinksPage(dest);
     m->setDirectTarget(dest);
 }
 
@@ -108,7 +120,7 @@ void VendingMachine::directDrinksPage(MenuManager* m) {
  */
 void VendingMachine::populateUserOrderPage(std::shared_ptr<Page> pPtr) {
     Page& obj = *(pPtr);
-    obj.reset("Your Order");
+    obj.reset(getLang().get("userOrderPageTitle"));
 }
 
 /**
@@ -117,13 +129,13 @@ void VendingMachine::populateUserOrderPage(std::shared_ptr<Page> pPtr) {
  * @param m 
  */
 void VendingMachine::directUserOrderPage(MenuManager* m) {
-    VendingMachine *menuHandler = dynamic_cast<VendingMachine*>(m);
+    VendingMachine* menuHandler = VendingMachine::linker(m);
     if(menuHandler == NULL) {
-        throw std::invalid_argument(concatenateString({"Invalid casting from ", typeid(m).name(), " to ", typeid(m).name()}));
+        throw std::runtime_error(concatenateString({"Invalid casting from ", typeid(m).name(), " to ", typeid(m).name()}));
     }
     //  Todo: implement Selectable Action to delete order
     std::shared_ptr<Page> pPtr = std::make_shared<Page>();
-    VendingMachine::populateUserOrderPage(pPtr);
+    menuHandler->populateUserOrderPage(pPtr);
     Page& page = *(pPtr);
     int k = 0;
     for(int i : menuHandler->userOrderHandler().getOrders()) {
@@ -141,9 +153,9 @@ void VendingMachine::directUserOrderPage(MenuManager* m) {
  * @param m 
  */
 void VendingMachine::requestAddSnackOrder(MenuManager* m) {
-    VendingMachine* menuHandler = VendingMachine::linker<VendingMachine>(m);
+    VendingMachine* menuHandler = VendingMachine::linker(m);
     (menuHandler->userOrderHandler()).addOrder(menuHandler->currentSelection());
-    menuHandler->IOHandler()->print("\nAdded order successfully! Press any character to continue...", { "10" });
+    menuHandler->IOHandler()->print(menuHandler->getLang().get("actionAddOrderSuccess"), {"10"});
     m->IOHandler()->getChar();
 }
 
@@ -153,24 +165,22 @@ void VendingMachine::requestAddSnackOrder(MenuManager* m) {
  * @param m 
  */
 void VendingMachine::requestAddDrinkOrder(MenuManager* m) {
-    VendingMachine* menuHandler = VendingMachine::linker<VendingMachine>(m);
+    VendingMachine* menuHandler = VendingMachine::linker(m);
     (menuHandler->userOrderHandler()).addOrder(4 + menuHandler->currentSelection());                // Hard coded for example
-    menuHandler->IOHandler()->print("\nAdded order successfully! Press any character to continue...", { "10" });
+    menuHandler->IOHandler()->print(menuHandler->getLang().get("actionAddOrderSuccess"), { "10" });
     m->IOHandler()->getChar();
 }
 
 /**
  * @brief Return dynamically safe downcast of MenuManager Object to Vending Machine Object
  * 
- * @tparam T
  * @param m 
- * @return T* 
+ * @return 
  */
-template<typename T>
-T* VendingMachine::linker(MenuManager * m) {
+VendingMachine* VendingMachine::linker(MenuManager * m) {
     VendingMachine *menuHandler = dynamic_cast<VendingMachine*>(m);
-    if(menuHandler == NULL) {
-        throw std::invalid_argument(concatenateString({"Invalid casting from ", typeid(m).name(), " to ", typeid(m).name()}));
+    if(menuHandler == nullptr) {
+        throw std::invalid_argument(concatenateString({"Invalid casting from ", typeid(m).name(), " to VendingMachine*"}));
     }
     return menuHandler;
 }
