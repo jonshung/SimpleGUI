@@ -22,11 +22,13 @@ if(WIN32)
 endif()
 
 add_subdirectory(src)
-set(_ProjectBuildPaths "${_BuildProject}/*.cpp")
-file (GLOB _BuildSources ${_ProjectBuildPaths})
+set(_ProjectBuildPaths "${_BuildProject}/main.cpp"
+                       "${_BuildProject}/UserOrderHandler.cpp"
+                       "${_BuildProject}/VendingMachine.cpp"
+    )
 
+add_executable (BuildingTarget ${_ProjectBuildPaths})
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/out")
-add_executable (BuildingTarget ${_BuildSources})
 set_target_properties(BuildingTarget PROPERTIES OUTPUT_NAME ${_OutExecutable})
 
 target_include_directories(BuildingTarget PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/VendingMachine")
