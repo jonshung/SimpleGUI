@@ -1,5 +1,5 @@
-#pragma once
-#define _SELECTABLE_BASE_
+#ifndef _SELECTABLE_BASE_H_
+#define _SELECTABLE_BASE_H_
 
 #include <string>
 #include "MenuManager.h"
@@ -11,6 +11,9 @@ class Page;
 
 typedef void (*ActionType)(MenuManager*);
 
+/**
+ * @brief Base class for selectable component on a page
+*/
 class Selectable {
 private:
     std::string _label;
@@ -34,3 +37,5 @@ public:
     SelectableAction(ActionType, bool = false);
     ActionType getModule();
 };
+
+#endif

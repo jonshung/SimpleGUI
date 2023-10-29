@@ -63,6 +63,7 @@ MenuManager::MenuManager() {
     _IOHandler = UnixIO::instance();
     #endif
     _currentSelection = 0;
+    _quitFlag = false;
     this->_lang = LocalizeConfig("config/us.json");
     this->_style = ConfigManager("config/style.json");
 
@@ -70,6 +71,8 @@ MenuManager::MenuManager() {
     _bgColor = (_bgColor == -1) ? Color::BLACK : _bgColor;
     _defaultTextColor = _style.get<int>("defaultTextColor");
     _defaultTextColor = (_defaultTextColor == -1) ? Color::WHITE : _defaultTextColor;
+
+    _keyboardListener = std::make_shared<KeyboardEventListener>();
 }
 
 /**
@@ -99,18 +102,21 @@ MenuManager::~MenuManager() {
  * @param page
  */
 void MenuManager::loadPage() {
-    _updateFlag = false;
     this->preloadPage();
     this->render();
     this->postLoadPage();
 }
 
+
+std::shared_ptr<Page> MenuManager::getCurrentPage() {
+    return _currentPage;
+}
+
 /**
- * @brief Preloading opertion on a page ( should call clear screen for a clean transition )
+ * @brief Preloading opertion on a page
  * Overridable
 */
 void MenuManager::preloadPage() {
-    if (!_debug) IOHandler()->clearScreen();
 }
 
 /**
@@ -120,6 +126,7 @@ void MenuManager::preloadPage() {
  * @param page
  */
 void MenuManager::render() {
+    if (!_debug) IOHandler()->clearScreen();
     Page& page = *(_currentPage);
     std::vector<Selectable> selectables = page.getSelectables();
     if (this->direct()) {
@@ -140,111 +147,18 @@ void MenuManager::render() {
  * @param page
  */
 void MenuManager::postLoadPage() {
-    this->eventListener();
+    _keyboardListener->listen(this);
 }
 
 /**
- * @brief Handle user inputs in the interface.
- * Overridable
- * 
- * @param page
- */
-void MenuManager::eventListener() {
-    Page& page = *(_currentPage);
-    while (!_updateFlag) {
-        unsigned char key = IOHandler()->getChar();
-        if (isArrowKey(key)) {
-            this->onArrow(key);
-        }
-        if (Keys::ENTER == key) {
-            this->onEnter();
-        }
-    }
-    if (!_quitFlag) loadPage();
-}
-
-/**
- * @brief On arrow action, typically changing the selection of the user.
- * Overridable
- * 
- * @param c 
+ * @brief Set the quit flag for the program
 */
-void MenuManager::onArrow(int c) {
-    Page& page = *(_currentPage);
-    int selection = this->currentSelection();
-    switch (c) {
-    case Keys::UP: {
-        while (selection > 0) {
-            --selection;
-            Selectable dest;
-            try {
-                dest = page.getSelectable(selection);
-            }
-            catch (const std::invalid_argument& e) {
-                std::cout << e.what() << std::endl;
-                break;
-            }
-            if (dest.getAction() != nullptr) {
-                this->setSelection(page, selection);
-                _updateFlag = true;
-                break;
-            }
-        }
-        break;
-    }
-    case Keys::DOWN: {
-        while (selection < page.getSelectables().size() - 1) {
-            ++selection;
-            Selectable dest;
-            try {
-                dest = page.getSelectable(selection);
-            }
-            catch (const std::invalid_argument& e) {
-                std::cout << e.what() << std::endl;
-                break;
-            }
-            if (dest.getAction() != nullptr) {
-                this->setSelection(page, selection);
-                _updateFlag = true;
-                break;
-            }
-        }
-        break;
-    }
-    default: break;
-    }
+void MenuManager::quit() {
+    _quitFlag = true;
 }
 
-/**
- * @brief Experimental feature
-*/
-void MenuManager::onKey() {
-    //todo
-}
-
-/**
- * @brief Handle user enter key
-*/
-void MenuManager::onEnter() {
-    Page& page = *(_currentPage);
-
-    Selectable dest = page.getSelectable(this->currentSelection());
-    SelectableAction& action = *(dest.getAction());
-    if (action.getModule() == nullptr) return;
-    if (action.isQuit()) {
-        _quitFlag = true;
-        (action.getModule())(this);
-    }
-    else {
-        try {
-            (action.getModule())(this);
-        }
-        catch (const std::exception& e) {
-            IOHandler()->print(e.what(), { "9" });
-            _quitFlag = true;
-        }
-    }
-    _updateFlag = true;
+bool MenuManager::isQuit() {
+    return _quitFlag;
 }
 
 /**

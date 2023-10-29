@@ -10,7 +10,8 @@
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "installDir": "${sourceDir}/out/install/${presetName}",
             "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "g++.exe"
+                "CMAKE_CXX_COMPILER": "g++.exe",
+                "CMAKE_BUILD_TYPE": "Debug"
             },
             "condition": {
                 "type": "equals",

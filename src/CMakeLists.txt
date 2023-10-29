@@ -20,7 +20,7 @@ elseif(UNIX)
     list(FILTER _IOSources EXCLUDE REGEX ".*WindowsIO\\.cpp$")
 endif()
 
-set(_SimpleGUISources ${_MenuManagerSources} ${_LibsSources} ${_UtilsSources} ${_IOSources} ${_EventHandlerSouces})
+set(_SimpleGUISources ${_MenuManagerSources} ${_LibsSources} ${_UtilsSources} ${_IOSources} ${_EventHandlerSources})
 set(_ConfigSources ${_ConfigSources} PARENT_SCOPE)
 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/out")

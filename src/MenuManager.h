@@ -15,9 +15,10 @@
 #include "Page.h"
 #include "Selectable.h"
 #include "WindowsIO.h"
+#include "KeyboardEventListener.h"
 
+class KeyboardEventListener;
 class Selectable;
-class MenuManager;
 class Page;
 
 typedef void (*ActionType)(MenuManager*);
@@ -32,9 +33,10 @@ private:
     int _currentSelection;
     
     bool _direct;
-    bool _updateFlag;
     bool _quitFlag;
     std::shared_ptr<Page> _currentPage;
+
+    std::shared_ptr<KeyboardEventListener> _keyboardListener;
 protected:
     LocalizeConfig _lang;
     ConfigManager _style;
@@ -54,19 +56,17 @@ public:
     IOInterface* IOHandler();
     LocalizeConfig getLang();
     ConfigManager getStyle();
+    std::shared_ptr<Page> getCurrentPage();
 
     MenuManager();
     ~MenuManager();
-
-    virtual void eventListener();
-    virtual void onArrow(int);
-    virtual void onEnter();
-    virtual void onKey();
 
     virtual void loadPage() final;
     virtual void preloadPage();
     virtual void render();
     virtual void postLoadPage();
+    bool isQuit();
+    void quit();
     void setColor(int);
 
     static void initQuit(MenuManager*);
