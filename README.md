@@ -34,7 +34,7 @@ target_include_directories(BuildingTarget PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/Ex
 
 It is recommended that you implement your own derived MenuManager class as it allows full control over language configuration as well as action handling.\
 An example has been provided in the `VendingMachine` folder.\
-\
+
 ## Initialize a MenuManager instance:
 ```c++
 ...
@@ -44,7 +44,7 @@ std::shared_ptr<MenuManager> menuHandler = std::make_shared<MenuManager>();
 ```
 The building blocks of every MenuManager object are Page(s). Page provide a list of Selectable (that is, we can move the user current selection to that item), support for Unselectable items will be added shortly.\
 Each Selectable will also contain a SelectableAction, which is a wrapper class holding the action module. An action module is simply a function pointer that accepts a MenuManager object pointer that currently holding this Selectable, and return void.\
-\
+
 ## Initialize a Page instance and render:
 By default, a Page is rendered through the `loadPage()` method pipeline. Though currently simple, i'm intended to extend the use of this pipeline, allowing more control over how a Page is rendered.\
 Page object are associated inside a Menu in the form of a `std::shared_pointer`. To create a page and populate it with items:
@@ -73,7 +73,7 @@ this->loadPage();
 ```
 This is the basic steps of constructing a MenuManager objects as well as displaying your first Page.\
 By extending the action module of each item in a Page, we can direct the user to another page with the same procedure:\
-\
+
 ## The Selectable Object
 > To be deprecated.
 
