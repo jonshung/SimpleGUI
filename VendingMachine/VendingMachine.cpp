@@ -6,11 +6,10 @@
  */
 VendingMachine::VendingMachine() {
     std::shared_ptr<Page> pPtr(std::make_shared<Page>());
-    _lang = LocalizeConfig("locale/us.json");
+    _lang = LocalizeConfig("locale/us.json"); // overriding default language config
     VendingMachine::populateDefaultPage(pPtr);
     this->setDirectTarget(pPtr);
     this->loadPage();
-
 
     this->_orderHandler = UserOrder();
 }

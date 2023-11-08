@@ -19,7 +19,6 @@ public:
     static void directSnacksPage(MenuManager* m);
     static void directDrinksPage(MenuManager* m);
     static void directUserOrderPage(MenuManager* m);
-    static void doNothing(MenuManager*m);
     static void input(MenuManager* m);
 
     VendingMachine();
