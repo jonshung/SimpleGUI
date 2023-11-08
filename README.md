@@ -1,6 +1,9 @@
 # SimpleGUI
 > C++ CLI interface
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<br>
+<br>
 A simple CLI interface written in C++ compatible with Linux and Windows 10+ offering dynamic controls over interactivity and response!
 # Building
 CMake: Specify your project configuration in the root's `CMakeLists.txt`<br>
