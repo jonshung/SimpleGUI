@@ -14,7 +14,7 @@ set(_BuildProject "ExampleProgram")
 set(_OutExecutable ${_BuildProject})
 ...
 ```
-Add your source files
+Add your source files:
 ```cmake
 ...
 # Specify your project's source file here.
