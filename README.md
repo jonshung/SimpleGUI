@@ -33,6 +33,10 @@ Then, link your header files directory:
 target_include_directories(BuildingTarget PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/ExampleProject")
 ...
 ```
+Finally, run the CMake command to build the project:
+```Shell
+cmake --build ./SimpleGUI/build --config Release --target all
+```
 # Usage
 
 It is recommended that you implement your own derived MenuManager class as it allows full control over language configuration as well as action handling.\
