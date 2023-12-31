@@ -8,16 +8,18 @@
 #include <string.h>
 #include <algorithm>
 #include <iterator>
+#include <iomanip>
 
 class ConfigManager {
 protected:
     std::string _fileName;
     json _rawData;
 public:
-    void loadFromFile(std::string);
+    void loadFromFile(std::string, json = json());
     template<typename T>
     T get(std::string, json = json::value_t::null);
     ConfigManager();
-    ConfigManager(std::string);
+    ConfigManager(std::string, json = json());
     json getRaw(std::string, json = json::value_t::null);
+    ~ConfigManager();
 };

@@ -12,7 +12,7 @@ private:
 	"quitMessage"
 	};
 public:
-	LocalizeConfig(std::string);
+	LocalizeConfig(std::string, json = json());
 	LocalizeConfig();
 	void initialize();
 	std::string get(std::string);

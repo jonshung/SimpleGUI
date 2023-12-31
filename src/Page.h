@@ -27,6 +27,7 @@ public:
     void addSelectable(Selectable);
     void removeItem(int);
     static void setSelectablesActions(std::vector<Selectable>&, ActionType);
+    inline virtual void preload() {}
 
     void reset(std::string title = "", std::vector<Selectable> = std::vector<Selectable>());
 

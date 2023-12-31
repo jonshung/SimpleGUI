@@ -6,25 +6,15 @@
 #include <string>
 #include "Constant.h"
 #include "GeneralUtils.h"
-
-enum ProductsID {
-    SNACK1 = 0,
-    SNACK2 = 1,
-    SNACK3 = 2,
-    SNACK4 = 3,
-    DRINK1 = 4,
-    DRINK2 = 5,
-    DRINK3 = 6,
-};
+#include "StockType.h"
+#include <memory>
 
 class UserOrder {
 private:
-    std::vector<int> _orders;
+    std::vector<std::shared_ptr<StockType>> _orders;
 public:
-    std::vector<int>& getOrders();
-    void addOrder(int orderId);
-    int pop();
+    std::vector<std::shared_ptr<StockType>>& getOrders();
+    void addOrder(std::shared_ptr<StockType>);
+    std::shared_ptr<StockType> pop();
     void clear();
-
-    static std::string getProductNameFromId(int id);
 };

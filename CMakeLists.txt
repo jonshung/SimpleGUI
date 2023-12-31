@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.10.0)
 set (CMAKE_CXX_STANDARD 17)
 
 # Set this to your project name
@@ -25,6 +25,14 @@ add_subdirectory(src)
 set(_ProjectBuildPaths "${_BuildProject}/main.cpp"
                        "${_BuildProject}/UserOrderHandler.cpp"
                        "${_BuildProject}/VendingMachine.cpp"
+                       "${_BuildProject}/PageProvider.cpp"
+                       "${_BuildProject}/pages/DefaultPage.h"
+                       "${_BuildProject}/pages/DrinksPage.h"
+                       "${_BuildProject}/pages/SnacksPage.h"
+                       "${_BuildProject}/pages/UserOrderPage.h"
+                       "${_BuildProject}/StockSystem/StockHandler.cpp"
+                       "${_BuildProject}/StockSystem/SnackType.cpp"
+                       "${_BuildProject}/StockSystem/DrinkType.cpp"
     )
 
 add_executable (BuildingTarget ${_ProjectBuildPaths})
@@ -32,10 +40,5 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/out")
 set_target_properties(BuildingTarget PROPERTIES OUTPUT_NAME ${_OutExecutable})
 
 target_include_directories(BuildingTarget PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/VendingMachine")
+target_include_directories(BuildingTarget PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/VendingMachine/StockSystem")
 target_link_libraries(BuildingTarget SimpleGUI)
-
-# Change this to your project config path to automatically load it to the build path
-set(_ConfigPath "${CMAKE_SOURCE_DIR}/${_BuildProject}/locale")
-add_custom_command(TARGET BuildingTarget POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${_ConfigPath} $<TARGET_FILE_DIR:BuildingTarget>/locale)

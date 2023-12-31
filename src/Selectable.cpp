@@ -9,6 +9,22 @@ std::string Selectable::label() {
 }
 
 /**
+ * @brief Return the embedded data of this selectable object
+ * @return
+*/
+std::string Selectable::data() {
+    return _data;
+}
+
+/**
+ * @brief Set the embedded data
+ * @return
+*/
+void Selectable::data(std::string vl) {
+    _data = vl;
+}
+
+/**
  * @brief return a pointer to a SelectableAction object
  * @return
 */

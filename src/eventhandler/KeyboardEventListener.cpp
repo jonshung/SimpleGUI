@@ -21,7 +21,7 @@ void KeyboardEventListener::listen(MenuManager* menuHandler) {
 		if (menuHandler->direct()) {
 			break;
 		}
-		menuHandler->render();
+		if(!menuHandler->isQuit()) menuHandler->render();
 	}
 	if (menuHandler->direct()) menuHandler->loadPage();
 }

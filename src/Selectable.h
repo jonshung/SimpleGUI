@@ -17,9 +17,12 @@ typedef void (*ActionType)(MenuManager*);
 class Selectable {
 private:
     std::string _label;
+    std::string _data;
     std::shared_ptr<SelectableAction> _actionPtr;
 public:
     std::string label();
+    std::string data();
+    void data(std::string);
     std::shared_ptr<SelectableAction> getAction();
     void setAction(ActionType, bool = false);
     Selectable(std::string, ActionType, bool = false);

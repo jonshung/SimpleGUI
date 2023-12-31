@@ -4,15 +4,21 @@
 #include "MenuManager.h"
 #include "UserOrderHandler.h"
 #include "Config.h"
+#include "StockHandler.h"
+#include "SnackType.h"
+#include "DrinkType.h"
+
+#include "LocalePopulator.h"
 
 class VendingMachine : public MenuManager {
 private:
     UserOrder _orderHandler;
+    inline static std::shared_ptr<VendingMachine> _instance = nullptr;
+    inline static StockHandler _stockHandler;
+    VendingMachine();
 public:
-    void populateDefaultPage(std::shared_ptr<Page>);
-    void populateSnacksPage(std::shared_ptr<Page>);
-    void populateDrinksPage(std::shared_ptr<Page>);
-    void populateUserOrderPage(std::shared_ptr<Page>);
+    static std::shared_ptr<VendingMachine> getInstance();
+    static StockHandler& stockHandler();
 
     // ActionType components
     static void directDefaultPage(MenuManager* m);
@@ -21,7 +27,6 @@ public:
     static void directUserOrderPage(MenuManager* m);
     static void input(MenuManager* m);
 
-    VendingMachine();
     static VendingMachine* linker(MenuManager *);
 
     //example render overload
@@ -31,3 +36,5 @@ public:
     static void requestAddSnackOrder(MenuManager* m);
     static void requestAddDrinkOrder(MenuManager* m);
 };
+
+#include "PageProvider.h"

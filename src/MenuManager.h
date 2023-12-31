@@ -6,6 +6,7 @@
 #include <vector>
 #include <stdexcept>
 #include <memory>
+#include <filesystem>
 
 #include "WindowsIO.h"
 #include "UnixIO.h"
@@ -16,6 +17,7 @@
 #include "Selectable.h"
 #include "WindowsIO.h"
 #include "KeyboardEventListener.h"
+#include "StylePopulator.h"
 
 class KeyboardEventListener;
 class Selectable;
@@ -37,11 +39,9 @@ private:
     std::shared_ptr<Page> _currentPage;
 
     std::shared_ptr<KeyboardEventListener> _keyboardListener;
-protected:
-    LocalizeConfig _lang;
-    ConfigManager _style;
 public:
-    
+    inline static LocalizeConfig _lang;
+    inline static ConfigManager _style;
     virtual std::string getMenuName();
     int bgColor();
     int defaultTextColor();
@@ -67,7 +67,6 @@ public:
     virtual void postLoadPage();
     bool isQuit();
     void quit();
-    void setColor(int);
 
     static void initQuit(MenuManager*);
     static void doNothing(MenuManager*);

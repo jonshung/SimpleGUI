@@ -12,23 +12,23 @@ ConfigManager::ConfigManager() {
  * @brief Initialize a config interface
  * @param fileName 
 */
-ConfigManager::ConfigManager(std::string fileName) {
-    this->loadFromFile(fileName);
+ConfigManager::ConfigManager(std::string fileName, json defaultFallback) {
+    this->loadFromFile(fileName, defaultFallback);
 }
 
 /**
  * @brief Load a config file from path relative to executable's path
  * @param fileName
 */
-void ConfigManager::loadFromFile(std::string fileName) {
+void ConfigManager::loadFromFile(std::string fileName, json defaultFallback) {
     int returnCode;
+    this->_fileName = fileName;
     json buffer = parseJsonFromFile(fileName, returnCode);
     if (returnCode != FileHandlingFlag::SUCESS) {
-        std::cout << "Unable to process raw from " << fileName << std::endl;
+        this->_rawData = defaultFallback;
         return;
     }
     this->_rawData = buffer;
-    this->_fileName = fileName;
 }
 
 /**
@@ -69,6 +69,13 @@ T ConfigManager::get(std::string key, json obj) {
         std::cout << "Error: " << e.what() << std::endl;
     }
     return returnType;
+}
+
+ConfigManager::~ConfigManager() {
+    if(this->_fileName.length() == 0) return;
+    std::fstream fH(this->_fileName, std::fstream::out);
+    if(!fH.is_open()) return;
+    fH << std::setw(4) << this->_rawData.dump(); 
 }
 
 /**

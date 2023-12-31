@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.10.0)
 set (CMAKE_CXX_STANDARD 17)
 project(SimpleGUI VERSION 0.1.0 LANGUAGES CXX)
 
@@ -24,11 +24,5 @@ set(_SimpleGUISources ${_MenuManagerSources} ${_LibsSources} ${_UtilsSources} ${
 set(_ConfigSources ${_ConfigSources} PARENT_SCOPE)
 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/out")
-add_library(SimpleGUI STATIC ${_SimpleGUISources})
+add_library(SimpleGUI SHARED ${_SimpleGUISources})
 target_include_directories(SimpleGUI PUBLIC ${_SimpleGUIInclude})
-
-message("Copying base config files")
-set(_ConfigPath "${CMAKE_CURRENT_SOURCE_DIR}/config")
-add_custom_command(TARGET SimpleGUI POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${_ConfigPath} $<TARGET_FILE_DIR:SimpleGUI>/config)

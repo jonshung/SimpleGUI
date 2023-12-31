@@ -64,8 +64,10 @@ MenuManager::MenuManager() {
     #endif
     _currentSelection = 0;
     _quitFlag = false;
-    this->_lang = LocalizeConfig("config/us.json");
-    this->_style = ConfigManager("config/style.json");
+    if(!std::filesystem::is_directory("./config")) {
+        std::filesystem::create_directory(std::filesystem::path("./config"));
+    }
+    _style = ConfigManager("config/style.json", StylePopulator::getDefaultPopulator());
 
     _bgColor = _style.get<int>("defaultBackgroundColor");
     _bgColor = (_bgColor == -1) ? Color::BLACK : _bgColor;
@@ -97,7 +99,7 @@ MenuManager::~MenuManager() {
 
 /**
  * @brief Page loading pipeline (Do not overload)
- * Overridable
+ *
  * 
  * @param page
  */
@@ -113,10 +115,12 @@ std::shared_ptr<Page> MenuManager::getCurrentPage() {
 }
 
 /**
- * @brief Preloading opertion on a page
+ * @brief General Preloading opertion on a page
  * Overridable
 */
 void MenuManager::preloadPage() {
+    Page& page = *(_currentPage);
+    page.preload();
 }
 
 /**
@@ -133,7 +137,7 @@ void MenuManager::render() {
         this->forceSetSelection(page.initialSelection());
         this->setDirect(false);
     }
-    IOHandler()->print(page.title() + "\n", { this->getStyle().get<std::string>("titleColor")});
+    IOHandler()->print(page.title() + "\n", { this->getStyle().get<std::string>("titleColor") });
     for (int i = 0; i < selectables.size(); i++) {
         if (this->currentSelection() == i) IOHandler()->print(selectables[i].label(), { this->getStyle().get<std::string>("selectingColor")});
         else IOHandler()->print(selectables[i].label(), { /* standard color */ });
@@ -200,7 +204,7 @@ void MenuManager::forceSetSelection(int id) {
  */
 void MenuManager::initQuit(MenuManager* m) {
     m->IOHandler()->clearScreen();
-    std::string msg = (*m).getLang().get("quitMessage");
+    std::string msg = "Quiting program...";
     m->IOHandler()->print(msg, { "8" });
 }
 

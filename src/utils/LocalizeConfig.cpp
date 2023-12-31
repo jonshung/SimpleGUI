@@ -4,8 +4,8 @@
  * @brief Load config file and initialize locale resources
  * @param configFile 
 */
-LocalizeConfig::LocalizeConfig(std::string configFile) {
-	loadFromFile(configFile);
+LocalizeConfig::LocalizeConfig(std::string configFile, json defaultFallback) {
+	loadFromFile(configFile, defaultFallback);
 	initialize();
 }
 
@@ -21,8 +21,7 @@ LocalizeConfig::LocalizeConfig() {
 */
 void LocalizeConfig::initialize() {
 	if (_rawData.size() == 0) {
-		std::string excptMsg = "Invalid source for locale configuration at: " + _fileName;
-		throw std::runtime_error(excptMsg);
+		return;
 	}
 
 	for (const auto& it : _rawData.items()) {
